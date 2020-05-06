@@ -1,5 +1,6 @@
 package websocket;
 
+import decrypto.Color;
 import decrypto.Game;
 import decrypto.Player;
 
@@ -8,6 +9,8 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
+import java.util.Random;
 
 @ServerEndpoint(value = "/websocket/decrypto")
 public class DecryptoWS
@@ -40,24 +43,33 @@ public class DecryptoWS
         // link new player to game if not found
         if (player == null)
         {
-            player = new Player(requestSession);
+            Color color = new Random().nextInt(2) % 2 == 0 ? Color.BLACK : Color.WHITE;
+            player = new Player(requestSession, color);
             game.addPlayer(player);
         }
 
         // link window to player
         player.getWsSessions().add(session);
+        //inform others of player creation
+        broadcastUpdate();
 
         System.out.println("Open : player with rs " + player.getRequestSession() + " opened wsSession " + session.getId());
         System.out.println("player now has " + player.getWsSessions().size() + " wsSessions");
         System.out.println("nplayers: " + game.getPlayers().size());
+
+
+
+    }
+
+    private void broadcastUpdate()
+    {
+        broadcast(DecryptoParser.gameUpdate(game));
     }
 
     @OnMessage
     public void onTextMessage(String message)
     {
-/*
-        System.out.println("id " + player.getSession().getId() + " received message : "  + message);
-*/
+
     }
 
     @OnClose
@@ -71,6 +83,18 @@ public class DecryptoWS
         {
             game = null;
             System.out.println("removed game, no more windows");
+        }
+    }
+
+    public void broadcast(String message)
+    {
+        try {
+        for (Player p : game.getPlayers())
+            for (Session s : p.getWsSessions())
+                    s.getBasicRemote().sendText(message);
+
+        } catch (IOException e) { // TODO dans quelle situation ça se déclenche?
+            e.printStackTrace();
         }
     }
 }

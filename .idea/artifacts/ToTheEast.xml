@@ -7,6 +7,13 @@
         <element id="directory" name="classes">
           <element id="module-output" name="ToTheEast" />
         </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="javax.servlet:jstl:1.2" />
+          <element id="library" level="project" name="mysql:mysql-connector-java:8.0.20" />
+          <element id="library" level="project" name="org.codehaus.jackson:jackson-mapper-asl:1.8.0" />
+          <element id="library" level="project" name="javax.websocket:javax.websocket-api:1.0" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/jackson-mapper-asl-1.8.0.jar" />
+        </element>
       </element>
     </root>
   </artifact>

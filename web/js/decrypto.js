@@ -1,45 +1,55 @@
 let decryptoApp = angular.module('decryptoApp', []);
 
 decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
+
     $scope.ownId = ownId;
 
-    let game = {};
+    $scope.game = {};
+    $scope.game.players = [];
 
-    game.socket = null;
+
+    let socket = null;
 
     function launchGame() {
         for (let i = 0; i < 10; i++)
-            setTimeout(sendMessage, 1000);
+            setTimeout(socket.send("oui"), 1000);
     }
 
-    function connect()
+    function connect(name)
     {
-        let url;
-        if (window.location.protocol === 'http:') {
-            url = 'ws://' + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
-        } else {
-            url = 'wss://' + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
-        }
+        if (name === undefined || name === "")
+            name = "anonyme";
 
-        if ('WebSocket' in window) {
-            game.socket = new WebSocket(url);
-        } else if ('MozWebSocket' in window) {
-            game.socket = new MozWebSocket(url); //TODO peut-être enlever?
-        } else {
+        let preurl = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+        let url = preurl + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
+
+        if ('WebSocket' in window)
+            socket = new WebSocket(url);
+        else
             alert('Error: WebSocket is not supported by this browser.');
-        }
 
-        game.socket.onopen = function() {
+
+
+
+        socket.onopen = function() {
             console.log("oui opené");
             launchGame();
         };
 
-        game.socket.onclose = function() {
+        socket.onclose = function() {
             console.log("nonon closed");
         };
 
-        game.socket.onmessage = function(message) {
-            console.log(message);
+        socket.onmessage = function(message) {
+            console.log(message.data);
+            let packet = JSON.parse(message.data);
+            switch (packet.type) {
+                case 'update':
+                    $scope.game = packet;
+                    break;
+            }
+
+            $scope.$apply();
         };
     }
 

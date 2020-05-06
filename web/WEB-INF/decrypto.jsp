@@ -9,7 +9,10 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
-
+<script type="text/javascript">
+    var ownId = '${ownId}';
+</script>
+<script src="../js/decrypto.js"></script>
 
 
 
@@ -18,16 +21,14 @@
     <title>Decrypto entre bons p'tits potes</title>
 </head>
 <body ng-controller="decryptoCtrl">
-<label>Mon ID:</label>
-{{ownId}}
+<table>
+    <tr ng-repeat="p in game.players">
+        <td>{{p.name}}</td>
+        <td>{{p.color}}</td>
+    </tr>
+</table>
 <br />
 
 
-
-
-<script type="text/javascript">
-    var ownId = '${ownId}';
-</script>
-<script src="../js/decrypto.js"></script>
 </body>
 </html>
