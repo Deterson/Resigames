@@ -27,4 +27,14 @@
         <servlet-name>GestionTestJDBC</servlet-name>
         <url-pattern>/testjdbc</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Decrypto</servlet-name>
+        <servlet-class>com.decrypto.Game</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Decrypto</servlet-name>
+        <url-pattern>/decrypto</url-pattern>
+    </servlet-mapping>
 </web-app>
