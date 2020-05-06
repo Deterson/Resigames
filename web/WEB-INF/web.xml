@@ -30,7 +30,7 @@
 
     <servlet>
         <servlet-name>Decrypto</servlet-name>
-        <servlet-class>com.decrypto.Game</servlet-class>
+        <servlet-class>com.decrypto.GameHttp</servlet-class>
     </servlet>
 
     <servlet-mapping>

@@ -16,9 +16,9 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     {
         let url;
         if (window.location.protocol === 'http:') {
-            url = 'ws://' + window.location.host + '/websocket/decrypto';
+            url = 'ws://' + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
         } else {
-            url = 'wss://' + window.location.host + '/websocket/decrypto';
+            url = 'wss://' + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
         }
 
         if ('WebSocket' in window) {
