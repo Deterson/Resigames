@@ -6,6 +6,7 @@ import decrypto.Color;
 import decrypto.Game;
 import decrypto.Player;
 import decrypto.action.Action;
+import decrypto.action.ActionChangeColor;
 import decrypto.action.ActionRename;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -93,6 +94,13 @@ public class DecryptoWS
         Action action = g.fromJson(message, Action.class);
         switch (action.getType())
         {
+            case "changeColor":
+                ActionChangeColor actionChangeColor = g.fromJson(message, ActionChangeColor.class);
+                //do action
+                game.changePlayerColor(actionChangeColor);
+                //tell clients
+                broadcastChangeColor(actionChangeColor);
+                break;
             case "rename":
                 ActionRename actionRename = g.fromJson(message, ActionRename.class);
                 //do action
@@ -100,15 +108,6 @@ public class DecryptoWS
                 //tell clients
                 broadcastRename(actionRename);
                 break;
-        }
-    }
-
-    private void broadcastRename(ActionRename actionRename)
-    {
-        try {
-            broadcast(new ObjectMapper().writeValueAsString(actionRename));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -123,6 +122,25 @@ public class DecryptoWS
         {
             game = null;
             System.out.println("removed game, no more windows");
+        }
+    }
+
+    private void broadcastChangeColor(ActionChangeColor actionChangeColor)
+    {
+        try {
+            broadcast(new ObjectMapper().writeValueAsString(actionChangeColor));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void broadcastRename(ActionRename actionRename)
+    {
+        try {
+            broadcast(new ObjectMapper().writeValueAsString(actionRename));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,6 +1,8 @@
 package decrypto;
 
+import decrypto.action.ActionChangeColor;
 import decrypto.action.ActionRename;
+import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.websocket.Session;
@@ -42,15 +44,26 @@ public class Game
         return ret;
     }
 
-    public void renamePlayer(ActionRename actionRename)
+    public Player findPlayerById(int id)
     {
         for (Player p : players)
-        {
-            if (p.getId() == actionRename.getPlayerId())
-            {
-                p.setName(actionRename.getNewName());
-                break;
-            }
-        }
+            if (p.getId() == id)
+                return p;
+
+        System.err.println("player doesn't exist with id : " + id);
+        new PlayerMissingException().printStackTrace();
+        return null;
+    }
+
+    public void renamePlayer(ActionRename actionRename)
+    {
+        Player p = findPlayerById(actionRename.getPlayerId());
+        p.setName(actionRename.getNewName());
+    }
+
+    public void changePlayerColor(ActionChangeColor actionChangeColor)
+    {
+        Player p = findPlayerById(actionChangeColor.getPlayerId());
+        p.setColor(actionChangeColor.getColor());
     }
 }

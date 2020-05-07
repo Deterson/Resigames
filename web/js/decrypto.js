@@ -19,6 +19,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         return $scope.game.players.find(p => p.id === id);
     }
 
+    function getCurrentPlayer() {
+        return findPlayerFromId($scope.playerId);
+    }
+
     function connect(name)
     {
         if (name === undefined || name === "")
@@ -49,8 +53,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     $scope.playerId = packet.id;
                     break;
                 case 'rename':
-                    let foundPlayer = findPlayerFromId(packet.playerId);
-                    foundPlayer.name = packet.newName;
+                    findPlayerFromId(packet.playerId).name = packet.newName;
+                    break;
+                case 'changeColor':
+                    findPlayerFromId(packet.playerId).color = packet.color;
                     break;
                 case 'update':
                     $scope.game = packet.game;
@@ -68,6 +74,14 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         socket.send('{"type":"rename",' +
             '"playerId":' + $scope.playerId + ',' +
             '"newName":"' + $scope.renameField + '"}');
+    };
+
+    $scope.changeColor = function() {
+        let packet = {};
+        packet.type = 'changeColor';
+        packet.playerId = $scope.playerId;
+        packet.color = (getCurrentPlayer().color === 'WHITE' ? 'BLACK' : 'WHITE');
+        socket.send(JSON.stringify(packet));
     };
 
     function isAlphaNumerical(input)

@@ -35,5 +35,6 @@ Vous êtes le player d'id {{playerId}}
 <label>to rename: <input type="text" ng-model="renameField"></label><br/>
 <button ng-click="rename()"></button>
 
+<button ng-click="changeColor()"></button>
 </body>
 </html>
