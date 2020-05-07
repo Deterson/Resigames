@@ -1,10 +1,13 @@
 package websocket;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import decrypto.Color;
-import decrypto.DecryptoAction;
 import decrypto.Game;
 import decrypto.Player;
-import jdk.nashorn.internal.parser.JSONParser;
+import decrypto.action.Action;
+import decrypto.action.ActionRename;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -13,7 +16,6 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @ServerEndpoint(value = "/websocket/decrypto")
 public class DecryptoWS
@@ -57,11 +59,24 @@ public class DecryptoWS
         //inform others of player creation
         broadcastUpdate();
 
+        sendPlayerId(session);
+
+
         System.out.println("Open : player with rs " + player.getRequestSession() + " opened wsSession " + session.getId());
         System.out.println("player now has " + player.getWsSessions().size() + " wsSessions");
         System.out.println("nplayers: " + game.getPlayers().size());
 
 
+
+    }
+
+    private void sendPlayerId(Session session)
+    {
+        try {
+            session.getBasicRemote().sendText("{\"type\":\"yourPlayerId\",\"id\":" + player.getId() + "}");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -73,6 +88,28 @@ public class DecryptoWS
     @OnMessage
     public void onTextMessage(String message)
     {
+        System.out.println("received:\n" + message);
+         Gson g = new Gson();
+        Action action = g.fromJson(message, Action.class);
+        switch (action.getType())
+        {
+            case "rename":
+                ActionRename actionRename = g.fromJson(message, ActionRename.class);
+                //do action
+                game.renamePlayer(actionRename);
+                //tell clients
+                broadcastRename(actionRename);
+                break;
+        }
+    }
+
+    private void broadcastRename(ActionRename actionRename)
+    {
+        try {
+            broadcast(new ObjectMapper().writeValueAsString(actionRename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClose

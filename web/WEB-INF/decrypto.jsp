@@ -24,12 +24,16 @@
 <table>
     <tr ng-repeat="p in game.players">
         <td>{{p.name}}</td>
+        <td>{{p.id}}</td>
         <td>{{p.color}}</td>
     </tr>
 </table>
+
+Vous êtes le player d'id {{playerId}}
 <br />
 
-<button ng-click="createPlayer()"></button>
+<label>to rename: <input type="text" ng-model="renameField"></label><br/>
+<button ng-click="rename()"></button>
 
 </body>
 </html>

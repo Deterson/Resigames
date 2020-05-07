@@ -1,6 +1,7 @@
 package decrypto;
 
 
+import decrypto.Color;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @JsonIgnoreProperties({"wsSessions playerIds"})
 public class Player
 {
-    private static final AtomicInteger playerIds = new AtomicInteger(0);
+    private static AtomicInteger playerIds = new AtomicInteger(0);
     private final int id;
     private Color color;
     private String name;
@@ -25,7 +26,7 @@ public class Player
         this.id = playerIds.getAndIncrement();
         this.color = color;
         this.requestSession = requestSesion;
-        this.name = requestSesion;
+        this.name = "player" + this.id;
         wsSessions = new ArrayList<>();
     }
 

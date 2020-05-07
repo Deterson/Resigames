@@ -6,13 +6,17 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.game = {};
     $scope.game.players = [];
+    $scope.playerId = null;
 
+    $scope.renameField = "";
 
     let socket = null;
 
     function launchGame() {
-        for (let i = 0; i < 10; i++)
-            setTimeout(socket.send("oui"), 1000);
+    }
+
+    function findPlayerFromId(id) {
+        return $scope.game.players.find(p => p.id === id);
     }
 
     function connect(name)
@@ -38,20 +42,43 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         };
 
         socket.onmessage = function(message) {
-            console.log(message.data);
             let packet = JSON.parse(message.data);
+            console.log(packet);
             switch (packet.type) {
-                case 'renamed':
-                    let foundPlayer = $scope.game.players.find(p => p.id === packet.playerId);
+                case 'yourPlayerId':
+                    $scope.playerId = packet.id;
+                    break;
+                case 'rename':
+                    let foundPlayer = findPlayerFromId(packet.playerId);
                     foundPlayer.name = packet.newName;
                     break;
                 case 'update':
-                    $scope.game = packet;
+                    $scope.game = packet.game;
                     break;
             }
 
             $scope.$apply();
+            console.log($scope.game);
         };
+    }
+
+    $scope.rename = function() {
+        if (!isAlphaNumerical($scope.renameField))
+            return;
+        socket.send('{"type":"rename",' +
+            '"playerId":' + $scope.playerId + ',' +
+            '"newName":"' + $scope.renameField + '"}');
+    };
+
+    function isAlphaNumerical(input)
+    {
+        if (/^[a-z0-9]+$/i.test(input))
+            return true;
+        if (input === undefined || input === null || input === "")
+            alert("valeur non vide pls");
+        else
+            alert("only alphanumerical characters (ouais pélo c'est pas pour tout de suite l'injection SQL)");
+        return false;
     }
 
     connect();
