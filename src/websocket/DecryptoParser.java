@@ -2,6 +2,8 @@ package websocket;
 
 
 import com.mysql.cj.x.protobuf.MysqlxDatatypes;
+import decrypto.Action;
+import decrypto.DecryptoAction;
 import decrypto.Game;
 import decrypto.Player;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,10 +15,16 @@ public class DecryptoParser
 
     public static String gameUpdate(Game game)
     {
-        StringBuilder sb = new StringBuilder("{\"type\":\"update\"");
-        sb.append(", \"players\":").append(parsePlayers(game));
-        sb.append("}");
-        return sb.toString();
+        try {
+            DecryptoAction act = new DecryptoAction();
+            act.setAction(Action.UPDATE);
+            act.setGame(game);
+
+            return new ObjectMapper().writeValueAsString(act);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private static String parsePlayers(Game game)

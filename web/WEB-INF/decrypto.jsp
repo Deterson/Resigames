@@ -29,6 +29,7 @@
 </table>
 <br />
 
+<button ng-click="createPlayer()"></button>
 
 </body>
 </html>

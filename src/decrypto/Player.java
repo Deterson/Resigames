@@ -1,15 +1,19 @@
 package decrypto;
 
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-@JsonIgnoreProperties({"wsSessions"})
+@JsonIgnoreProperties({"wsSessions playerIds"})
 public class Player
 {
+    private static final AtomicInteger playerIds = new AtomicInteger(0);
+    private final int id;
     private Color color;
     private String name;
     private final String requestSession;
@@ -18,10 +22,16 @@ public class Player
 
     public Player(String requestSesion, Color color)
     {
+        this.id = playerIds.getAndIncrement();
         this.color = color;
         this.requestSession = requestSesion;
         this.name = requestSesion;
         wsSessions = new ArrayList<>();
+    }
+
+    public int getId()
+    {
+        return id;
     }
 
     public String getRequestSession()
@@ -29,6 +39,7 @@ public class Player
         return requestSession;
     }
 
+    @JsonIgnore
     public List<Session> getWsSessions()
     {
         return wsSessions;

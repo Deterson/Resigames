@@ -1,5 +1,7 @@
 package decrypto;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import javax.websocket.Session;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class Game
         players.add(player);
     }
 
+    @JsonIgnore
     public Collection<Session> getAllWsSessions()
     {
         List<Session> ret = new ArrayList<>();

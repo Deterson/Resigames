@@ -1,8 +1,10 @@
 package websocket;
 
 import decrypto.Color;
+import decrypto.DecryptoAction;
 import decrypto.Game;
 import decrypto.Player;
+import jdk.nashorn.internal.parser.JSONParser;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -11,6 +13,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @ServerEndpoint(value = "/websocket/decrypto")
 public class DecryptoWS
@@ -33,12 +36,13 @@ public class DecryptoWS
         if (game == null)
             game = new Game();
 
+/* TODO remettre (et trouver comment avoir un debug switch genre if (debug))
+
         // find player of same requestSession (i e multiple tabs opened idk)
         for(Player p : game.getPlayers())
-        {
             if (p.getRequestSession().equals(requestSession))
                 player = p;
-        }
+*/
 
         // link new player to game if not found
         if (player == null)
@@ -69,7 +73,6 @@ public class DecryptoWS
     @OnMessage
     public void onTextMessage(String message)
     {
-
     }
 
     @OnClose

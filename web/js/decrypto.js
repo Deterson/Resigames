@@ -28,9 +28,6 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         else
             alert('Error: WebSocket is not supported by this browser.');
 
-
-
-
         socket.onopen = function() {
             console.log("oui opené");
             launchGame();
@@ -44,6 +41,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             console.log(message.data);
             let packet = JSON.parse(message.data);
             switch (packet.type) {
+                case 'renamed':
+                    let foundPlayer = $scope.game.players.find(p => p.id === packet.playerId);
+                    foundPlayer.name = packet.newName;
+                    break;
                 case 'update':
                     $scope.game = packet;
                     break;
