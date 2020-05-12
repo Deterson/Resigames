@@ -7,6 +7,7 @@ import decrypto.Game;
 import decrypto.Player;
 import decrypto.action.Action;
 import decrypto.action.ActionChangeColor;
+import decrypto.action.ActionClues;
 import decrypto.action.ActionRename;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -92,6 +93,8 @@ public class DecryptoWS
         System.out.println("received:\n" + message);
          Gson g = new Gson();
         Action action = g.fromJson(message, Action.class);
+        System.out.println(action.getType());
+
         switch (action.getType())
         {
             case "changeColor":
@@ -107,6 +110,22 @@ public class DecryptoWS
                 game.renamePlayer(actionRename);
                 //tell clients
                 broadcastRename(actionRename);
+                break;
+
+            case "start":
+                //do action
+                game.start();
+                //tell clients
+                broadcastUpdate();
+                break;
+
+            case "clues":
+                ActionClues actionClues = g.fromJson(message, ActionClues.class);
+                //do action
+                //tell clients
+                break;
+            default:
+                System.err.println("received unhandled packet");
                 break;
         }
     }

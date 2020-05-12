@@ -2,11 +2,34 @@ let decryptoApp = angular.module('decryptoApp', []);
 
 decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
+    // steps of game.step
+    let SETUP = "SETUP";
+    let CLUEWRITING = "CLUEWRITING";
+    let WHITEGUESS = "WHITEGUESS";
+    let BLACKGUESS = "BLACKGUESS";
+    let END = "END";
+
+/*  states of $scope.state:
+    SETUP
+    WAIT
+    CLUEWRITING
+    GUESS
+    */
+
     $scope.ownId = ownId;
 
     $scope.game = {};
     $scope.game.players = [];
+
     $scope.playerId = null;
+    $scope.state = "setup";
+
+    function resetClues()
+    {
+        $scope.clue = ['', '', ''];
+    }
+
+    resetClues();
 
     $scope.renameField = "";
 
@@ -19,8 +42,57 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         return $scope.game.players.find(p => p.id === id);
     }
 
-    function getCurrentPlayer() {
+    function getClientPlayer() {
         return findPlayerFromId($scope.playerId);
+    }
+
+    function handleUpdate(game) {
+        $scope.game = game;
+        changeState();
+    }
+
+    function changeState()
+    {
+        switch ($scope.game.step) {
+            case SETUP :
+                $scope.state = "SETUP";
+                break;
+            case CLUEWRITING:
+                if ($scope.game.whiteCluer.id === $scope.playerId
+                    || $scope.game.blackCluer.id === $scope.playerId)
+                    $scope.state = "CLUEWRITING";
+                else
+                    $scope.state = "WAIT";
+                break;
+
+            case WHITEGUESS:
+                if (getClientPlayer().color === 'WHITE') // délibérément verbalisé pour un potentiel FOREIGN_GUESS
+                {
+                    if ($scope.game.whiteCluer.id === $scope.playerId)
+                        $scope.state = 'WAIT';
+                    else
+                        $scope.state = 'GUESS';
+                }
+                else
+                    $scope.state = 'GUESS'; // peut-être un FOREIGN GUESS là plus tard
+
+                break;
+
+            case BLACKGUESS:
+                if (getClientPlayer().color === 'BLACK') {
+                    if ($scope.game.blackCluer.id === $scope.playerId)
+                        $scope.state = 'WAIT';
+                    else
+                        $scope.state = 'GUESS';
+                }
+                else
+                    $scope.state = 'GUESS'; // peut-être un FOREIGN GUESS là plus tard
+                break;
+
+            case END:
+                $scope.state = 'END';
+        }
+
     }
 
     function connect(name)
@@ -59,7 +131,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     findPlayerFromId(packet.playerId).color = packet.color;
                     break;
                 case 'update':
-                    $scope.game = packet.game;
+                    handleUpdate(packet.game);
+                    break;
+                case 'changeStep':
+                    $scope.game.step = packet.step;
                     break;
             }
 
@@ -80,7 +155,21 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         let packet = {};
         packet.type = 'changeColor';
         packet.playerId = $scope.playerId;
-        packet.color = (getCurrentPlayer().color === 'WHITE' ? 'BLACK' : 'WHITE');
+        packet.color = (getClientPlayer().color === 'WHITE' ? 'BLACK' : 'WHITE');
+        socket.send(JSON.stringify(packet));
+    };
+
+    $scope.startGame = function() {
+        let packet = {};
+        packet.type = 'start';
+        socket.send(JSON.stringify(packet));
+    };
+
+    $scope.sendClues = function()
+    {
+        let packet = {};
+        packet.type = 'clues';
+        packet.clues = $scope.clues;
         socket.send(JSON.stringify(packet));
     };
 

@@ -7,6 +7,16 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    table, td, th {
+        border: 1px solid black;
+    }
+</style>
+
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
 <script type="text/javascript">
@@ -21,20 +31,33 @@
     <title>Decrypto entre bons p'tits potes</title>
 </head>
 <body ng-controller="decryptoCtrl">
-<table>
-    <tr ng-repeat="p in game.players">
-        <td>{{p.name}}</td>
-        <td>{{p.id}}</td>
-        <td>{{p.color}}</td>
-    </tr>
-</table>
+<div> state: {{state}}</div>
 
-Vous êtes le player d'id {{playerId}}
-<br />
+<div ng-switch="state">
 
-<label>to rename: <input type="text" ng-model="renameField"></label><br/>
-<button ng-click="rename()"></button>
+    <div ng-switch-when="SETUP">
+        <table>
+            <tr ng-repeat="p in game.players">
+                <td>{{p.name}}</td>
+                <td>{{p.id}}</td>
+                <td>{{p.color}}</td>
+            </tr>
+        </table>
 
-<button ng-click="changeColor()"></button>
+        Vous êtes le player d'id {{playerId}}
+        <br /><br /><br /><br />
+
+        <label>to rename: <input type="text" ng-model="$parent.renameField"><button ng-click="rename()"></button></label><br/>
+        <label>Change side<button ng-click="changeColor()"></button></label><br/>
+        <label>Start<button ng-click="startGame()"></button></label><br/>
+
+    </div>
+    <div ng-switch-when="CLUEWRITING">
+        <label>clue 1: <input type="text" ng-model="$parent.clue[0]"></label><br/>
+        <label>clue 2: <input type="text" ng-model="$parent.clue[1]"></label><br/>
+        <label>clue 3: <input type="text" ng-model="$parent.clue[2]"></label><br/>
+        <button ng-click="sendClues()">Send clues</button>
+    </div>
+</div>
 </body>
 </html>

@@ -1,7 +1,10 @@
 package decrypto.action;
 
+import decrypto.Player;
+
 public class Action
 {
+    private Player player;
     private String type;
 
     public Action()
