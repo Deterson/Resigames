@@ -26,7 +26,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function resetClues()
     {
-        $scope.clue = ['', '', ''];
+        $scope.clues = ['', '', ''];
     }
 
     resetClues();
@@ -170,6 +170,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         let packet = {};
         packet.type = 'clues';
         packet.clues = $scope.clues;
+        console.log(packet);
         socket.send(JSON.stringify(packet));
     };
 

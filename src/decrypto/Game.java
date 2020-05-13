@@ -1,6 +1,7 @@
 package decrypto;
 
 import decrypto.action.ActionChangeColor;
+import decrypto.action.ActionClues;
 import decrypto.action.ActionRename;
 import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -18,7 +19,9 @@ public class Game
     private Random r;
 
     private Player whiteCluer;
+    private List<String> whiteClues;
     private Player blackCluer;
+    private List<String> blackClues;
 
     public Game()
     {
@@ -27,6 +30,7 @@ public class Game
         step = Step.SETUP;
         paused = true;
         whiteCluer = blackCluer = null;
+        whiteClues = blackClues = null;
     }
 
     @JsonIgnore
@@ -69,6 +73,21 @@ public class Game
         paused = false;
         return true;
     }
+
+    public boolean addClues(ActionClues actionClues)
+    {
+        if (actionClues.getPlayer().getColor() == Color.WHITE)
+            whiteClues = actionClues.getClues();
+        else
+            blackClues = actionClues.getClues();
+        if (whiteClues != null && blackClues != null) // changes step
+        {
+            step = Step.WHITEGUESS;
+            return true;
+        }
+        return false;
+    }
+
 
     private void findNextCluers()
     {
@@ -167,4 +186,5 @@ public class Game
     {
         this.blackCluer = blackCluer;
     }
+
 }

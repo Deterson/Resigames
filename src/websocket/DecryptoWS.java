@@ -121,7 +121,15 @@ public class DecryptoWS
             case "clues":
                 ActionClues actionClues = (ActionClues)getClassFromJson(message, ActionClues.class);
                 //do action
+                boolean next = game.addClues(actionClues);
+                System.out.println("message : " + message);
+                System.out.println("clues : " + actionClues.getClues());
                 //tell clients
+                if (next)
+                {
+                    System.out.println("neeext");
+                    broadcastUpdate();
+                }
                 break;
             default:
                 System.err.println("received unhandled packet");
