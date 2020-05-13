@@ -2,13 +2,13 @@ package decrypto.action;
 
 import decrypto.Color;
 
-public class ActionChangeColor extends ActionPlayer
+public class ActionChangeColor extends Action
 {
     private Color color;
 
-    public ActionChangeColor(String type, int playerId, Color color)
+    public ActionChangeColor(Color color)
     {
-        super("changeColor", playerId);
+        super("changeColor");
         this.color = color;
     }
 

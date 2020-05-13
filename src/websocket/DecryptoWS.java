@@ -91,21 +91,20 @@ public class DecryptoWS
     public void onTextMessage(String message)
     {
         System.out.println("received:\n" + message);
-         Gson g = new Gson();
-        Action action = g.fromJson(message, Action.class);
+        Action action = (Action)getClassFromJson(message, Action.class); // TODO enlever (Action) à chaque fois c relou
         System.out.println(action.getType());
 
         switch (action.getType())
         {
             case "changeColor":
-                ActionChangeColor actionChangeColor = g.fromJson(message, ActionChangeColor.class);
+                ActionChangeColor actionChangeColor = (ActionChangeColor)getClassFromJson(message, ActionChangeColor.class);
                 //do action
                 game.changePlayerColor(actionChangeColor);
                 //tell clients
                 broadcastChangeColor(actionChangeColor);
                 break;
             case "rename":
-                ActionRename actionRename = g.fromJson(message, ActionRename.class);
+                ActionRename actionRename = (ActionRename)getClassFromJson(message, ActionRename.class);
                 //do action
                 game.renamePlayer(actionRename);
                 //tell clients
@@ -120,7 +119,7 @@ public class DecryptoWS
                 break;
 
             case "clues":
-                ActionClues actionClues = g.fromJson(message, ActionClues.class);
+                ActionClues actionClues = (ActionClues)getClassFromJson(message, ActionClues.class);
                 //do action
                 //tell clients
                 break;
@@ -128,6 +127,14 @@ public class DecryptoWS
                 System.err.println("received unhandled packet");
                 break;
         }
+    }
+
+    private Object getClassFromJson(String message, Class<? extends Action> c)
+    {
+        Gson g = new Gson();
+        Action action = g.fromJson(message, c);
+        action.setPlayer(player);
+        return action;
     }
 
     @OnClose

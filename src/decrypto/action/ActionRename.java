@@ -1,12 +1,12 @@
 package decrypto.action;
 
-public class ActionRename extends ActionPlayer
+public class ActionRename extends Action
 {
     private String newName;
 
-    public ActionRename(String newName, int playerId)
+    public ActionRename(String newName)
     {
-        super("rename", playerId);
+        super("rename");
         this.newName = newName;
     }
 

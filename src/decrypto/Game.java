@@ -52,14 +52,12 @@ public class Game
 
     public void renamePlayer(ActionRename actionRename)
     {
-        Player p = findPlayerById(actionRename.getPlayerId());
-        p.setName(actionRename.getNewName());
+        actionRename.getPlayer().setName(actionRename.getNewName());
     }
 
     public void changePlayerColor(ActionChangeColor actionChangeColor)
     {
-        Player p = findPlayerById(actionChangeColor.getPlayerId());
-        p.setColor(actionChangeColor.getColor());
+        actionChangeColor.getPlayer().setColor(actionChangeColor.getColor());
     }
 
     public boolean start()

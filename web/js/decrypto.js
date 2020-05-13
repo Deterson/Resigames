@@ -125,10 +125,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     $scope.playerId = packet.id;
                     break;
                 case 'rename':
-                    findPlayerFromId(packet.playerId).name = packet.newName;
+                    findPlayerFromId(packet.player.id).name = packet.newName;
                     break;
                 case 'changeColor':
-                    findPlayerFromId(packet.playerId).color = packet.color;
+                    findPlayerFromId(packet.player.id).color = packet.color;
                     break;
                 case 'update':
                     handleUpdate(packet.game);
@@ -146,15 +146,15 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     $scope.rename = function() {
         if (!isAlphaNumerical($scope.renameField))
             return;
-        socket.send('{"type":"rename",' +
-            '"playerId":' + $scope.playerId + ',' +
-            '"newName":"' + $scope.renameField + '"}');
+        let packet = {};
+        packet.type = 'rename';
+        packet.newName = $scope.renameField;
+        socket.send(JSON.stringify(packet));
     };
 
     $scope.changeColor = function() {
         let packet = {};
         packet.type = 'changeColor';
-        packet.playerId = $scope.playerId;
         packet.color = (getClientPlayer().color === 'WHITE' ? 'BLACK' : 'WHITE');
         socket.send(JSON.stringify(packet));
     };
