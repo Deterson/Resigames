@@ -1,14 +1,11 @@
 package websocket;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import decrypto.Color;
 import decrypto.Game;
 import decrypto.Player;
-import decrypto.action.Action;
-import decrypto.action.ActionChangeColor;
-import decrypto.action.ActionClues;
-import decrypto.action.ActionRename;
+import decrypto.Step;
+import decrypto.action.*;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.websocket.OnClose;
@@ -82,6 +79,12 @@ public class DecryptoWS
 
     }
 
+    private void broadcastUpdateWhiteClues()
+    {
+        broadcast(DecryptoParser.gameUpdateWithoutWhiteClues(game));
+    }
+
+
     private void broadcastUpdate()
     {
         broadcast(DecryptoParser.gameUpdate(game));
@@ -120,19 +123,31 @@ public class DecryptoWS
 
             case "clues":
                 ActionClues actionClues = (ActionClues)getClassFromJson(message, ActionClues.class);
+                // check action
+                if (!game.checkActionClues(actionClues))
+                    return;
                 //do action
                 boolean next = game.addClues(actionClues);
-                System.out.println("message : " + message);
-                System.out.println("clues : " + actionClues.getClues());
                 //tell clients
                 if (next)
-                {
-                    System.out.println("neeext");
-                    broadcastUpdate();
-                }
+                    broadcastUpdateWhiteClues();
                 break;
             default:
                 System.err.println("received unhandled packet");
+                break;
+
+            case "guess":
+                ActionGuess actionGuess = (ActionGuess)getClassFromJson(message, ActionGuess.class);
+                //check action
+                if (!game.checkActionGuess(actionGuess))
+                    return;
+                //do action
+                game.applyGuess(actionGuess);
+                //tell clients
+                if (game.getStep() == Step.WHITEGUESS) // still hide black clues
+                    broadcastUpdateWhiteClues();
+                else
+                    broadcastUpdate();
                 break;
         }
     }

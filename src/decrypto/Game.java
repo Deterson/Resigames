@@ -2,6 +2,7 @@ package decrypto;
 
 import decrypto.action.ActionChangeColor;
 import decrypto.action.ActionClues;
+import decrypto.action.ActionGuess;
 import decrypto.action.ActionRename;
 import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -13,24 +14,35 @@ import java.util.stream.Collectors;
 
 public class Game
 {
+    private Random r;
+
     private List<Player> players;
     private Step step;
     private boolean paused;
-    private Random r;
+    private Score score;
+    private Color won;
 
     private Player whiteCluer;
     private List<String> whiteClues;
     private Player blackCluer;
     private List<String> blackClues;
+    private List<Integer> whiteCode;
+    private List<Integer> blackCode;
+    private List<Integer> whiteGuess;
+    private List<Integer> blackGuess;
 
     public Game()
     {
         r = new Random();
         players = new ArrayList<>();
+        won = Color.NONE;
         step = Step.SETUP;
         paused = true;
+        score = new Score();
         whiteCluer = blackCluer = null;
-        whiteClues = blackClues = null;
+        whiteCode = blackCode = null;
+        emptyGuesses();
+        emptyClues();
     }
 
     @JsonIgnore
@@ -68,8 +80,7 @@ public class Game
     {
         if (getColored(Color.BLACK).isEmpty() || getColored(Color.WHITE).isEmpty())
             return false;
-        step = Step.CLUEWRITING;
-        findNextCluers();
+        nextRound();
         paused = false;
         return true;
     }
@@ -88,6 +99,97 @@ public class Game
         return false;
     }
 
+    private void goToBlackGuess()
+    {
+        step = Step.BLACKGUESS;
+        emptyGuesses();
+    }
+
+    private void nextRound() // TODO historique
+    {
+        step = Step.CLUEWRITING;
+        findNextCluers();
+        fillRandomCodes();
+        emptyGuesses();
+        emptyClues();
+        score.nextRound();
+    }
+
+    // returns color of winner if any (Color.NONE otherwise)
+    public void applyGuess(ActionGuess actionGuess)
+    {
+        if (actionGuess.getPlayer().getColor() == Color.WHITE)
+            whiteGuess = actionGuess.getGuesses();
+        else
+            blackGuess = actionGuess.getGuesses();
+
+        boolean guessResult = guessResult(actionGuess);
+        if (whiteGuess != null && blackGuess != null) // end of guess
+        {
+            if (step == Step.BLACKGUESS) // end of round
+            {
+                if (guessResult) // GAME OVER
+                {
+                    step = Step.END;
+                    won = score.whoWon();
+                    return;
+                }
+                step = Step.ENDROUND;
+            }
+            else
+                goToBlackGuess();
+        }
+    }
+
+
+    public boolean guessResult(ActionGuess actionGuess) // TODO need a guessColor in Game attributes, coz that's ugly af
+    {
+        Player p = actionGuess.getPlayer();
+        if (step == Step.WHITEGUESS)
+        {
+            if (p.getColor() == Color.WHITE)
+                return applyDecryptoz(actionGuess);
+            return applyInterception(actionGuess);
+        }
+        if (step == Step.BLACKGUESS)
+        {
+            if (p.getColor() == Color.BLACK)
+                return applyDecryptoz(actionGuess);
+            return applyInterception(actionGuess);
+        }
+        throw new IllegalStateException("tried to apply guess while neither in WHITEGUESS nor BLACKGUESS step");
+    }
+
+    private boolean applyInterception(ActionGuess actionGuess)
+    {
+        List<Integer> colorCode = getColorCode(actionGuess.getPlayer().getColor());
+        if (actionGuess.getGuesses().equals(colorCode))
+            return score.add(Token.INTERCEPTION, actionGuess.getPlayer().getColor());
+        return false;
+    }
+
+    private boolean applyDecryptoz(ActionGuess actionGuess)
+    {
+        List<Integer> colorCode = getColorCode(actionGuess.getPlayer().getColor());
+
+        if (!actionGuess.getGuesses().equals(colorCode))
+            return score.add(Token.MISGUESS, actionGuess.getPlayer().getColor());
+        return false;
+    }
+
+
+    private void fillRandomCodes()
+    {
+        List<Integer> codes = Arrays.asList(1, 2, 3, 4);
+        blackCode = new ArrayList<>();
+        whiteCode = new ArrayList<>();
+
+        Collections.shuffle(codes, r);
+        blackCode.addAll(codes.subList(0, 3));
+
+        Collections.shuffle(codes, r);
+        whiteCode.addAll(codes.subList(0, 3));
+    }
 
     private void findNextCluers()
     {
@@ -121,6 +223,16 @@ public class Game
         return colored.get(r.nextInt(colored.size()));
     }
 
+
+    private void emptyClues()
+    {
+        whiteClues = blackClues = null;
+    }
+
+    private void emptyGuesses()
+    {
+        whiteGuess = blackGuess = null;
+    }
 
     public List<Player> getPlayers()
     {
@@ -157,6 +269,21 @@ public class Game
         this.step = step;
     }
 
+    public Score getScore()
+    {
+        return score;
+    }
+
+    public Color getWon()
+    {
+        return won;
+    }
+
+    public void setWon(Color won)
+    {
+        this.won = won;
+    }
+
     public boolean isPaused()
     {
         return paused;
@@ -187,4 +314,96 @@ public class Game
         this.blackCluer = blackCluer;
     }
 
+    public List<String> getBlackClues()
+    {
+        return blackClues;
+    }
+
+    public void setBlackClues(List<String> blackClues)
+    {
+        this.blackClues = blackClues;
+    }
+
+    public List<String> getWhiteClues()
+    {
+        return whiteClues;
+    }
+
+    public void setWhiteClues(List<String> whiteClues)
+    {
+        this.whiteClues = whiteClues;
+    }
+
+    @JsonIgnore
+    public List<Integer> getWhiteCode()
+    {
+        return whiteCode;
+    }
+
+    public void setWhiteCode(List<Integer> whiteCode)
+    {
+        this.whiteCode = whiteCode;
+    }
+
+    @JsonIgnore
+    public List<Integer> getBlackCode()
+    {
+        return blackCode;
+    }
+
+    public void setBlackCode(List<Integer> blackCode)
+    {
+        this.blackCode = blackCode;
+    }
+
+    private List<Integer> getColorCode(Color color)
+    {
+        if (color == Color.WHITE)
+            return whiteCode;
+        return blackCode;
+    }
+
+    public List<Integer> getWhiteGuess()
+    {
+        return whiteGuess;
+    }
+
+    public void setWhiteGuess(List<Integer> whiteGuess)
+    {
+        this.whiteGuess = whiteGuess;
+    }
+
+    private List<Integer> getColorGuess(Color color)
+    {
+        if (color == Color.WHITE)
+            return whiteGuess;
+        return blackGuess;
+    }
+
+    public List<Integer> getBlackGuess()
+    {
+        return blackGuess;
+    }
+
+    public void setBlackGuess(List<Integer> blackGuess)
+    {
+        this.blackGuess = blackGuess;
+    }
+
+    public boolean checkActionClues(ActionClues actionClues)
+    {
+        if (!actionClues.getPlayer().equals(whiteCluer) && !actionClues.getPlayer().equals(blackCluer))
+            return false;
+        return step == Step.CLUEWRITING && actionClues.getClues() != null && actionClues.getClues().size() == 3;
+    }
+
+
+    public boolean checkActionGuess(ActionGuess actionGuess) // prevents cluers from sending their own guess
+    {
+        if (step == Step.WHITEGUESS && actionGuess.getPlayer() == whiteCluer)
+            return false;
+        if (step == Step.BLACKGUESS && actionGuess.getPlayer() == blackCluer)
+            return false;
+        return (step == Step.WHITEGUESS || step == Step.BLACKGUESS) && actionGuess.check();
+    }
 }

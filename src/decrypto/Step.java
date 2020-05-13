@@ -6,5 +6,6 @@ public enum Step
     CLUEWRITING,
     WHITEGUESS,
     BLACKGUESS,
+    ENDROUND,
     END
 }

@@ -6,6 +6,9 @@ import decrypto.Game;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DecryptoParser
 {
@@ -21,6 +24,23 @@ public class DecryptoParser
         }
         return "";
     }
+
+    public static String gameUpdateWithoutWhiteClues(Game game) // removing black clues to avoid cheating
+    {
+        try {
+            ActionUpdate act = new ActionUpdate();
+            List<String> blackClues = game.getBlackClues();
+            game.setBlackClues(Arrays.asList("ptdr", "ptdr", "ptdr"));
+            act.setGame(game);
+            String ret = new ObjectMapper().writeValueAsString(act);
+            game.setBlackClues(blackClues);
+            return ret;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     private static String parsePlayers(Game game)
     {
@@ -45,4 +65,5 @@ public class DecryptoParser
 */
 return "";
     }
+
 }

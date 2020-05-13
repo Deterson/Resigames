@@ -58,6 +58,21 @@
         <label>clue 3: <input type="text" ng-model="$parent.clues[2]"></label><br/>
         <button ng-click="sendClues()">Send clues</button>
     </div>
+    <div ng-switch-when="WHITEGUESS">
+        clue 1: {{$parent.game.whiteClues[0]}} <select ng-model="guesses[0]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
+        clue 2: {{$parent.game.whiteClues[1]}} <select ng-model="guesses[1]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
+        clue 3: {{$parent.game.whiteClues[2]}} <select ng-model="guesses[2]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
+
+        <button ng-click="sendGuesses()">Send guesses</button>
+    </div>
+    <div ng-switch-when="BLACKGUESS">
+        clue 1: {{$parent.game.blackClues[0]}} <select ng-model="guesses[0]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
+        clue 2: {{$parent.game.blackClues[1]}} <select ng-model="guesses[1]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
+        clue 3: {{$parent.game.blackClues[2]}} <select ng-model="guesses[2]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
+
+        <button ng-click="sendGuesses()">Send guesses</button>
+    </div>
+
 </div>
 </body>
 </html>

@@ -7,13 +7,16 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     let CLUEWRITING = "CLUEWRITING";
     let WHITEGUESS = "WHITEGUESS";
     let BLACKGUESS = "BLACKGUESS";
+    let ENDROUND = "ENDROUND";
     let END = "END";
 
 /*  states of $scope.state:
     SETUP
     WAIT
     CLUEWRITING
-    GUESS
+    WHITEGUESS
+    BLACKGUESS
+    ENDROUND
     */
 
     $scope.ownId = ownId;
@@ -28,8 +31,13 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     {
         $scope.clues = ['', '', ''];
     }
-
     resetClues();
+
+    function resetGuesses()
+    {
+        $scope.guesses = [];
+    }
+    resetGuesses();
 
     $scope.renameField = "";
 
@@ -71,10 +79,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     if ($scope.game.whiteCluer.id === $scope.playerId)
                         $scope.state = 'WAIT';
                     else
-                        $scope.state = 'GUESS';
+                        $scope.state = 'WHITEGUESS';
                 }
                 else
-                    $scope.state = 'GUESS'; // peut-être un FOREIGN GUESS là plus tard
+                    $scope.state = 'WHITEGUESS'; // peut-être un FOREIGN GUESS là plus tard
 
                 break;
 
@@ -83,10 +91,15 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     if ($scope.game.blackCluer.id === $scope.playerId)
                         $scope.state = 'WAIT';
                     else
-                        $scope.state = 'GUESS';
+                        $scope.state = 'BLACKGUESS';
+                    resetGuesses();
                 }
                 else
-                    $scope.state = 'GUESS'; // peut-être un FOREIGN GUESS là plus tard
+                    $scope.state = 'BLACKGUESS'; // peut-être un FOREIGN GUESS là plus tard
+                break;
+
+            case ENDROUND:
+                $scope.state = "ENDROUND";
                 break;
 
             case END:
@@ -170,7 +183,14 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         let packet = {};
         packet.type = 'clues';
         packet.clues = $scope.clues;
-        console.log(packet);
+        socket.send(JSON.stringify(packet));
+    };
+
+    $scope.sendGuesses = function()
+    {
+        let packet = {};
+        packet.type = "guess";
+        packet.guesses = $scope.guesses;
         socket.send(JSON.stringify(packet));
     };
 
