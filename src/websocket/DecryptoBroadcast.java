@@ -1,5 +1,6 @@
 package websocket;
 
+import decrypto.Color;
 import decrypto.Game;
 import decrypto.Player;
 import decrypto.action.Action;
@@ -10,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.List;
 
 public class DecryptoBroadcast
 {
@@ -56,7 +58,26 @@ public class DecryptoBroadcast
         }
     }
 
-    public static void sendCodes(Game game)
+    public static void broadcastColoredCode(Game game, Color color)
+    {
+        try
+        {
+            List<Integer> code;
+            if (color == Color.WHITE)
+                code = game.getWhiteCode();
+            else
+                code = game.getBlackCode();
+
+            ActionCode actionCode = new ActionCode(code, color);
+
+            broadcast(game, new ObjectMapper().writeValueAsString(actionCode));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendCodesToCluers(Game game)
     {
         try {
             ActionCode wActionCode = new ActionCode(game.getWhiteCode());

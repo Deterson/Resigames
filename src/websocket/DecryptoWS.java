@@ -109,7 +109,7 @@ public class DecryptoWS
                 boolean next = game.addClues(actionClues);
                 //tell clients
                 if (next)
-                    DecryptoBroadcast.broadcastUpdateWhiteClues(game);
+                    DecryptoBroadcast.broadcastUpdateWhiteClues(game); // still hides black clues
                 break;
             default:
                 System.err.println("received unhandled packet");
@@ -121,12 +121,20 @@ public class DecryptoWS
                 if (!game.checkActionGuess(actionGuess))
                     return;
                 //do action
-                game.applyGuess(actionGuess);
+                boolean endOfGuess = game.applyGuess(actionGuess);
                 //tell clients
-                if (game.getStep() == Step.WHITEGUESS) // still hide black clues
-                    DecryptoBroadcast.broadcastUpdateWhiteClues(game);
-                else
+                if (endOfGuess)
+                {
+                    if (game.getStep() == Step.BLACKGUESS) // reveal white code
+                        DecryptoBroadcast.broadcastColoredCode(game, Color.WHITE);
+                    else if (game.getStep() == Step.ENDROUND) // reveal black code
+                        DecryptoBroadcast.broadcastColoredCode(game, Color.BLACK);
                     DecryptoBroadcast.broadcastUpdate(game);
+                }
+                else
+                {
+                    // TODO déclencher timer et le broadcaster
+                }
                 break;
 
             case "ready":

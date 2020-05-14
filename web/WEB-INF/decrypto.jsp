@@ -66,6 +66,7 @@
         <button ng-click="sendGuesses()">Send guesses</button>
     </div>
     <div ng-switch-when="BLACKGUESS">
+        white code was {{$parent.whiteCode}}<br/>
         clue 1: {{$parent.game.blackClues[0]}} <select ng-model="guesses[0]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
         clue 2: {{$parent.game.blackClues[1]}} <select ng-model="guesses[1]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
         clue 3: {{$parent.game.blackClues[2]}} <select ng-model="guesses[2]"><option>1</option><option>2</option><option>3</option><option>4</option></select><br/>
@@ -74,7 +75,8 @@
     </div>
 
     <div ng-switch-when="ENDROUND">
-        Round ended.
+        black code was {{$parent.blackCode}}<br/>
+        Round ended.<br/>
         <button ng-show="!isReady" ng-click="sendReady(true)">I'm ready</button>
         <button ng-show="isReady" ng-click="sendReady(false)">I'm not ready</button>
     </div>

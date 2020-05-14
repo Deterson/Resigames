@@ -29,16 +29,25 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.isReady = false;
 
+    function resetCodes()
+    {
+        $scope.code = null;
+        $scope.whiteCode = null;
+        $scope.blackCode = null;
+    }
+
     function resetClues()
     {
         $scope.clues = ['', '', ''];
     }
-    resetClues();
 
     function resetGuesses()
     {
         $scope.guesses = [];
     }
+
+    resetCodes();
+    resetClues();
     resetGuesses();
 
     $scope.renameField = "";
@@ -153,7 +162,12 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     break;
                 case 'code':
                     console.log("code!");
-                    $scope.code = packet.code;
+                    if (packet.color === null)
+                        $scope.code = packet.code;
+                    else if (packet.color === 'WHITE')
+                        $scope.whiteCode = packet.code;
+                    else
+                        $scope.blackCode = packet.code;
                     break;
             }
 

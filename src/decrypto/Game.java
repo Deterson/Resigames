@@ -4,7 +4,6 @@ import decrypto.action.*;
 import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import websocket.DecryptoBroadcast;
-import websocket.DecryptoWS;
 
 import javax.websocket.Session;
 import java.util.*;
@@ -109,14 +108,15 @@ public class Game
         step = Step.CLUEWRITING;
         findNextCluers();
         fillRandomCodes();
-        DecryptoBroadcast.sendCodes(this);
+        DecryptoBroadcast.sendCodesToCluers(this);
         emptyGuesses();
         emptyClues();
         score.nextRound();
     }
 
     // changes "won" attribute if any winner
-    public void applyGuess(ActionGuess actionGuess)
+    // returns if end of guess
+    public boolean applyGuess(ActionGuess actionGuess)
     {
         if (actionGuess.getPlayer().getColor() == Color.WHITE)
             whiteGuess = actionGuess.getGuesses();
@@ -124,6 +124,7 @@ public class Game
             blackGuess = actionGuess.getGuesses();
 
         boolean guessResult = guessResult(actionGuess);
+
         if (whiteGuess != null && blackGuess != null) // end of guess
         {
             if (step == Step.BLACKGUESS) // end of round
@@ -132,13 +133,15 @@ public class Game
                 {
                     step = Step.END;
                     won = score.whoWon();
-                    return;
+                    return true;
                 }
                 step = Step.ENDROUND;
             }
             else
                 goToBlackGuess();
+            return true;
         }
+        return false;
     }
 
 
