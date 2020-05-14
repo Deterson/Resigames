@@ -6,7 +6,6 @@ import decrypto.Game;
 import decrypto.Player;
 import decrypto.Step;
 import decrypto.action.*;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -56,7 +55,7 @@ public class DecryptoWS
         // link window to player
         player.getWsSessions().add(session);
         //inform others of player creation
-        broadcastUpdate();
+        DecryptoBroadcast.broadcastUpdate(game);
 
         sendPlayerId(session);
 
@@ -69,26 +68,6 @@ public class DecryptoWS
 
     }
 
-    private void sendPlayerId(Session session)
-    {
-        try {
-            session.getBasicRemote().sendText("{\"type\":\"yourPlayerId\",\"id\":" + player.getId() + "}");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void broadcastUpdateWhiteClues()
-    {
-        broadcast(DecryptoParser.gameUpdateWithoutWhiteClues(game));
-    }
-
-
-    private void broadcastUpdate()
-    {
-        broadcast(DecryptoParser.gameUpdate(game));
-    }
 
     @OnMessage
     public void onTextMessage(String message)
@@ -104,21 +83,21 @@ public class DecryptoWS
                 //do action
                 game.changePlayerColor(actionChangeColor);
                 //tell clients
-                broadcastChangeColor(actionChangeColor);
+                DecryptoBroadcast.broadcastChangeColor(game, actionChangeColor);
                 break;
             case "rename":
                 ActionRename actionRename = (ActionRename)getClassFromJson(message, ActionRename.class);
                 //do action
                 game.renamePlayer(actionRename);
                 //tell clients
-                broadcastRename(actionRename);
+                DecryptoBroadcast.broadcastRename(game, actionRename);
                 break;
 
             case "start":
                 //do action
                 game.start();
                 //tell clients
-                broadcastUpdate();
+                DecryptoBroadcast.broadcastUpdate(game);
                 break;
 
             case "clues":
@@ -130,7 +109,7 @@ public class DecryptoWS
                 boolean next = game.addClues(actionClues);
                 //tell clients
                 if (next)
-                    broadcastUpdateWhiteClues();
+                    DecryptoBroadcast.broadcastUpdateWhiteClues(game);
                 break;
             default:
                 System.err.println("received unhandled packet");
@@ -145,9 +124,9 @@ public class DecryptoWS
                 game.applyGuess(actionGuess);
                 //tell clients
                 if (game.getStep() == Step.WHITEGUESS) // still hide black clues
-                    broadcastUpdateWhiteClues();
+                    DecryptoBroadcast.broadcastUpdateWhiteClues(game);
                 else
-                    broadcastUpdate();
+                    DecryptoBroadcast.broadcastUpdate(game);
                 break;
 
             case "ready":
@@ -156,7 +135,7 @@ public class DecryptoWS
                 boolean allReady = game.ready(actionReady);
                 //tell clients
                 if (allReady)
-                    broadcastUpdate();
+                    DecryptoBroadcast.broadcastUpdate(game);
         }
     }
 
@@ -182,37 +161,14 @@ public class DecryptoWS
         }
     }
 
-    private void broadcastChangeColor(ActionChangeColor actionChangeColor)
+    private void sendPlayerId(Session session)
     {
         try {
-            broadcast(new ObjectMapper().writeValueAsString(actionChangeColor));
+            session.getBasicRemote().sendText("{\"type\":\"yourPlayerId\",\"id\":" + player.getId() + "}");
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
-
-    private void broadcastRename(ActionRename actionRename)
-    {
-        try {
-            broadcast(new ObjectMapper().writeValueAsString(actionRename));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void broadcast(String message)
-    {
-        try {
-        for (Player p : game.getPlayers())
-            for (Session s : p.getWsSessions())
-                synchronized (s)
-                {
-                    s.getBasicRemote().sendText(message);
-                }
-
-        } catch (IOException e) { // TODO dans quelle situation ça se déclenche?
-            e.printStackTrace();
-        }
-    }
 }

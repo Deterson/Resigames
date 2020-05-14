@@ -79,7 +79,9 @@
         <button ng-show="isReady" ng-click="sendReady(false)">I'm not ready</button>
     </div>
     <div ng-switch-when="END">
-        game finished. {{$parent.game.won}} won.
+        game finished.
+        <div ng-show="game.won === 'DRAW'">it's a draw!</div>
+        <div ng-show="game.won !== 'DRAW'">winner : {{$parent.game.won}}</div>
     </div>
 
 </div>

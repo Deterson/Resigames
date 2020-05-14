@@ -107,9 +107,15 @@ public class Game
         step = Step.CLUEWRITING;
         findNextCluers();
         fillRandomCodes();
+        sendCodes();
         emptyGuesses();
         emptyClues();
         score.nextRound();
+    }
+
+    private void sendCodes()
+    {
+
     }
 
     // changes "won" attribute if any winner
