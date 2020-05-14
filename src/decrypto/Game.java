@@ -17,7 +17,7 @@ public class Game
     private Step step;
     private boolean paused;
     private Score score;
-    private Color won;
+    private Winner won;
 
     private Player whiteCluer;
     private List<String> whiteClues;
@@ -32,7 +32,7 @@ public class Game
     {
         r = new Random();
         players = new ArrayList<>();
-        won = Color.NONE;
+        won = Winner.NONE;
         step = Step.SETUP;
         paused = true;
         score = new Score();
@@ -112,7 +112,7 @@ public class Game
         score.nextRound();
     }
 
-    // returns color of winner if any (Color.NONE otherwise)
+    // changes "won" attribute if any winner
     public void applyGuess(ActionGuess actionGuess)
     {
         if (actionGuess.getPlayer().getColor() == Color.WHITE)
@@ -271,12 +271,12 @@ public class Game
         return score;
     }
 
-    public Color getWon()
+    public Winner getWon()
     {
         return won;
     }
 
-    public void setWon(Color won)
+    public void setWon(Winner won)
     {
         this.won = won;
     }

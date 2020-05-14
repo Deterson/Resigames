@@ -3,6 +3,5 @@ package decrypto;
 public enum Color
 {
     BLACK,
-    WHITE,
-    NONE
+    WHITE
 }
