@@ -53,9 +53,9 @@
 
     </div>
     <div ng-switch-when="CLUEWRITING">
-        <label>clue 1: <input type="text" ng-model="$parent.clues[0]"></label><br/>
-        <label>clue 2: <input type="text" ng-model="$parent.clues[1]"></label><br/>
-        <label>clue 3: <input type="text" ng-model="$parent.clues[2]"></label><br/>
+        <label>clue for n°{{$parent.code[0]}}: <input type="text" ng-model="$parent.clues[0]"></label><br/>
+        <label>clue for n°{{$parent.code[1]}}: <input type="text" ng-model="$parent.clues[1]"></label><br/>
+        <label>clue for n°{{$parent.code[2]}}: <input type="text" ng-model="$parent.clues[2]"></label><br/>
         <button ng-click="sendClues()">Send clues</button>
     </div>
     <div ng-switch-when="WHITEGUESS">

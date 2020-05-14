@@ -2,7 +2,9 @@ package websocket;
 
 import decrypto.Game;
 import decrypto.Player;
+import decrypto.action.Action;
 import decrypto.action.ActionChangeColor;
+import decrypto.action.ActionCode;
 import decrypto.action.ActionRename;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -50,6 +52,25 @@ public class DecryptoBroadcast
                     }
 
         } catch (IOException e) { // TODO dans quelle situation ça se déclenche?
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendCodes(Game game)
+    {
+        try {
+            ActionCode wActionCode = new ActionCode(game.getWhiteCode());
+            ActionCode bActionCode = new ActionCode(game.getBlackCode());
+            for (Session s : game.getWhiteCluer().getWsSessions())
+                synchronized (s) {
+                    s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(wActionCode));
+                }
+
+            for (Session s : game.getBlackCluer().getWsSessions())
+                synchronized (s) {
+                s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(bActionCode));
+                }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

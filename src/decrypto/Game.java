@@ -3,6 +3,8 @@ package decrypto;
 import decrypto.action.*;
 import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import websocket.DecryptoBroadcast;
+import websocket.DecryptoWS;
 
 import javax.websocket.Session;
 import java.util.*;
@@ -107,15 +109,10 @@ public class Game
         step = Step.CLUEWRITING;
         findNextCluers();
         fillRandomCodes();
-        sendCodes();
+        DecryptoBroadcast.sendCodes(this);
         emptyGuesses();
         emptyClues();
         score.nextRound();
-    }
-
-    private void sendCodes()
-    {
-
     }
 
     // changes "won" attribute if any winner

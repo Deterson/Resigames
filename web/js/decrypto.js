@@ -151,6 +151,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                 case 'changeStep':
                     $scope.game.step = packet.step;
                     break;
+                case 'code':
+                    console.log("code!");
+                    $scope.code = packet.code;
+                    break;
             }
 
             $scope.$apply();
