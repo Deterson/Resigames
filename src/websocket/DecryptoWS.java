@@ -206,7 +206,10 @@ public class DecryptoWS
         try {
         for (Player p : game.getPlayers())
             for (Session s : p.getWsSessions())
+                synchronized (s)
+                {
                     s.getBasicRemote().sendText(message);
+                }
 
         } catch (IOException e) { // TODO dans quelle situation ça se déclenche?
             e.printStackTrace();
