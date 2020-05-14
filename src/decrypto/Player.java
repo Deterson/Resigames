@@ -18,6 +18,7 @@ public class Player
     private Color color;
     private String name;
     private final String requestSession;
+    private boolean ready;
 
     private List<Session> wsSessions;
 
@@ -27,6 +28,7 @@ public class Player
         this.color = color;
         this.requestSession = requestSesion;
         this.name = "player" + this.id;
+        this.ready = false;
         wsSessions = new ArrayList<>();
     }
 
@@ -69,5 +71,15 @@ public class Player
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public boolean isReady()
+    {
+        return ready;
+    }
+
+    public void setReady(boolean ready)
+    {
+        this.ready = ready;
     }
 }

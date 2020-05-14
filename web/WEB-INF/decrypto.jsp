@@ -73,6 +73,15 @@
         <button ng-click="sendGuesses()">Send guesses</button>
     </div>
 
+    <div ng-switch-when="ENDROUND">
+        Round ended.
+        <button ng-show="!isReady" ng-click="sendReady(true)">I'm ready</button>
+        <button ng-show="isReady" ng-click="sendReady(false)">I'm not ready</button>
+    </div>
+    <div ng-switch-when="END">
+        game finished. {{$parent.game.won}} won.
+    </div>
+
 </div>
 </body>
 </html>

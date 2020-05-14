@@ -1,7 +1,7 @@
 package decrypto;
 
 public class Score
-{ // TODO LA POURQUOI JSON PRENDS PAS LES ints
+{
     private int round;
 
     private int whiteMisgues;
@@ -59,5 +59,45 @@ public class Score
     public int getRound()
     {
         return round;
+    }
+
+    public int getWhiteMisgues()
+    {
+        return whiteMisgues;
+    }
+
+    public void setWhiteMisgues(int whiteMisgues)
+    {
+        this.whiteMisgues = whiteMisgues;
+    }
+
+    public int getBlackMisguess()
+    {
+        return blackMisguess;
+    }
+
+    public void setBlackMisguess(int blackMisguess)
+    {
+        this.blackMisguess = blackMisguess;
+    }
+
+    public int getWhiteInterception()
+    {
+        return whiteInterception;
+    }
+
+    public void setWhiteInterception(int whiteInterception)
+    {
+        this.whiteInterception = whiteInterception;
+    }
+
+    public int getBlackInterception()
+    {
+        return blackInterception;
+    }
+
+    public void setBlackInterception(int blackInterception)
+    {
+        this.blackInterception = blackInterception;
     }
 }

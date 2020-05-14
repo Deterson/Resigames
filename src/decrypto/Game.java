@@ -1,9 +1,6 @@
 package decrypto;
 
-import decrypto.action.ActionChangeColor;
-import decrypto.action.ActionClues;
-import decrypto.action.ActionGuess;
-import decrypto.action.ActionRename;
+import decrypto.action.*;
 import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -405,5 +402,22 @@ public class Game
         if (step == Step.BLACKGUESS && actionGuess.getPlayer() == blackCluer)
             return false;
         return (step == Step.WHITEGUESS || step == Step.BLACKGUESS) && actionGuess.check();
+    }
+
+    public boolean ready(ActionReady actionReady)
+    {
+        actionReady.getPlayer().setReady(actionReady.isReady());
+        boolean ret = everyoneReady();
+        if (ret)
+            nextRound();
+        return ret;
+    }
+
+    private boolean everyoneReady()
+    {
+        for (Player p : players)
+            if (!p.isReady())
+                return false;
+        return true;
     }
 }

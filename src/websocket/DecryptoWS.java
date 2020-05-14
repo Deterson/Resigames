@@ -149,6 +149,14 @@ public class DecryptoWS
                 else
                     broadcastUpdate();
                 break;
+
+            case "ready":
+                ActionReady actionReady = (ActionReady)getClassFromJson(message, ActionReady.class);
+                //do action
+                boolean allReady = game.ready(actionReady);
+                //tell clients
+                if (allReady)
+                    broadcastUpdate();
         }
     }
 

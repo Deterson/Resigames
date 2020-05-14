@@ -27,6 +27,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     $scope.playerId = null;
     $scope.state = "setup";
 
+    $scope.isReady = false;
+
     function resetClues()
     {
         $scope.clues = ['', '', ''];
@@ -191,6 +193,15 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         let packet = {};
         packet.type = "guess";
         packet.guesses = $scope.guesses;
+        socket.send(JSON.stringify(packet));
+    };
+
+    $scope.sendReady = function(ready)
+    {
+        $scope.isReady = !$scope.isReady;
+        let packet = {};
+        packet.type = "ready";
+        packet.ready = ready;
         socket.send(JSON.stringify(packet));
     };
 
