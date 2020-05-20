@@ -112,13 +112,13 @@
 </div>
 <div>
     Score: <br/>
-    Interceptions: {{}}<br/>
-    Malentendus  : {{}}<br/>
+    Interceptions: {{yourInterceptions}}<br/>
+    Malentendus  : {{yourMalentendus}}<br/>
     <br/>
     <br/>
     Adversaires:<br/>
-    Interceptions: {{}}<br/>
-    Malentendus  : {{}}<br/>
+    Interceptions: {{theirInterceptions}}<br/>
+    Malentendus  : {{theirMalentendus}}<br/>
 </div>
 </body>
 </html>

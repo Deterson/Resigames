@@ -75,6 +75,22 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             $scope.playerColor = player.color;
     }
 
+    function refreshScore()
+    {
+        if ($scope.playerColor === "WHITE") {
+            $scope.yourInterceptions = $scope.game.score.whiteInterception;
+            $scope.yourMalentendus = $scope.game.score.whiteMisguess;
+            $scope.theirInterceptions = $scope.game.score.blackInterception;
+            $scope.theirMalentendus = $scope.game.score.blackMisguess;
+        }
+        else if ($scope.playerColor === "BLACK") {
+            $scope.yourInterceptions = $scope.game.score.blackInterception;
+            $scope.yourMalentendus = $scope.game.score.blackMisguess;
+            $scope.theirInterceptions = $scope.game.score.whiteInterception;
+            $scope.theirMalentendus = $scope.game.score.whiteMisguess;
+        }
+    }
+
     function getClientPlayer() {
         return findPlayerFromId($scope.playerId);
     }
@@ -88,6 +104,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.game = game;
         changeState();
         refreshPlayerColor();
+        refreshScore();
     }
 
     function handleWordsReceive(words) {

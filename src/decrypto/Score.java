@@ -1,19 +1,17 @@
 package decrypto;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 public class Score
 {
     private int round;
 
-    private int whiteMisgues;
+    private int whiteMisguess;
     private int blackMisguess;
     private int whiteInterception;
     private int blackInterception;
 
     public Score()
     {
-        round = whiteInterception = whiteMisgues = blackInterception = blackMisguess = 0;
+        round = whiteInterception = whiteMisguess = blackInterception = blackMisguess = 0;
     }
 
     // TODO make it return void and check game over differently
@@ -22,7 +20,7 @@ public class Score
         if (token == Token.MISGUESS)
         {
             if (color == Color.WHITE)
-                whiteMisgues++;
+                whiteMisguess++;
             else
                 blackMisguess++;
         }
@@ -40,18 +38,18 @@ public class Score
     public boolean isGameOver()
     {
         return whiteInterception >= 2
-                || whiteMisgues >= 2
+                || whiteMisguess >= 2
                 || blackInterception >= 2
                 || blackMisguess >= 2;
     }
 
     public Winner whoWon() // TODO round 8
     {
-        if ((whiteInterception == 2 && blackInterception == 2) || (whiteMisgues == 2 && blackMisguess == 2))
+        if ((whiteInterception == 2 && blackInterception == 2) || (whiteMisguess == 2 && blackMisguess == 2))
             return Winner.DRAW;
         if (whiteInterception == 2 || blackMisguess == 2)
             return Winner.WHITE;
-        if (blackInterception == 2 || whiteMisgues == 2)
+        if (blackInterception == 2 || whiteMisguess == 2)
             return Winner.BLACK;
         return Winner.NONE;
     }
@@ -66,14 +64,14 @@ public class Score
         return round;
     }
 
-    public int getWhiteMisgues()
+    public int getWhiteMisguess()
     {
-        return whiteMisgues;
+        return whiteMisguess;
     }
 
-    public void setWhiteMisgues(int whiteMisgues)
+    public void setWhiteMisguess(int whiteMisguess)
     {
-        this.whiteMisgues = whiteMisgues;
+        this.whiteMisguess = whiteMisguess;
     }
 
     public int getBlackMisguess()
