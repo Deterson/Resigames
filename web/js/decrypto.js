@@ -25,9 +25,12 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     $scope.game.players = [];
 
     $scope.playerId = null;
+    $scope.playerColor = null;
     $scope.state = "setup";
 
     $scope.isReady = false;
+
+    $scope.words = ["???", "???", "???", "???"];
 
     function resetCodes()
     {
@@ -57,17 +60,39 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     function launchGame() {
     }
 
+    function handleYourPlayerId(packet) {
+        $scope.playerId = packet.id;
+        refreshPlayerColor();
+    }
+
     function findPlayerFromId(id) {
         return $scope.game.players.find(p => p.id === id);
+    }
+
+    function refreshPlayerColor() {
+        let player = getClientPlayer();
+        if (player !== undefined && player !== null)
+            $scope.playerColor = player.color;
     }
 
     function getClientPlayer() {
         return findPlayerFromId($scope.playerId);
     }
 
+    function handleChangeColor(packet) {
+        findPlayerFromId(packet.player.id).color = packet.color;
+        refreshPlayerColor();
+    }
+
     function handleUpdate(game) {
         $scope.game = game;
         changeState();
+        refreshPlayerColor();
+    }
+
+    function handleWordsReceive(words) {
+        if (words !== undefined && words !== null)
+            $scope.words = words;
     }
 
     function changeState()
@@ -146,16 +171,19 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             console.log(packet);
             switch (packet.type) {
                 case 'yourPlayerId':
-                    $scope.playerId = packet.id;
+                    handleYourPlayerId(packet);
                     break;
                 case 'rename':
                     findPlayerFromId(packet.player.id).name = packet.newName;
                     break;
                 case 'changeColor':
-                    findPlayerFromId(packet.player.id).color = packet.color;
+                    handleChangeColor(packet);
                     break;
                 case 'update':
                     handleUpdate(packet.game);
+                    break;
+                case 'words':
+                    handleWordsReceive(packet.words);
                     break;
                 case 'changeStep':
                     $scope.game.step = packet.step;

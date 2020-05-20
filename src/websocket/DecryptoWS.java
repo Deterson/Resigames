@@ -7,20 +7,20 @@ import decrypto.Player;
 import decrypto.Step;
 import decrypto.action.*;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.servlet.http.HttpSession;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.util.Random;
 
-@ServerEndpoint(value = "/websocket/decrypto")
+@ServerEndpoint(value = "/websocket/decrypto", configurator=ServletAwareConfig.class)
 public class DecryptoWS
 {
     private static Game game = null; // global game
     private Player player; // this instance's player
     private Session wsSession; // this ws Session
+    private HttpSession httpSession;
 
     public DecryptoWS()
     {
@@ -28,13 +28,14 @@ public class DecryptoWS
     }
 
     @OnOpen
-    public void onOpen(Session session)
+    public void onOpen(Session session, EndpointConfig config)
     {
         this.wsSession = session;
+        this.httpSession = (HttpSession)config.getUserProperties().get("httpSession");
         String requestSession = session.getRequestParameterMap().get("requestSessionId").get(0);
 
         if (game == null)
-            game = new Game();
+            game = new Game(httpSession.getServletContext().getRealPath("\\WEB-INF\\words.txt"));
 
 /* TODO remettre (et trouver comment avoir un debug switch genre if (debug))
 

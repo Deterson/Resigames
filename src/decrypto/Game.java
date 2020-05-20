@@ -6,13 +6,19 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import websocket.DecryptoBroadcast;
 
 import javax.websocket.Session;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Game
 {
     private Random r;
+    private String dicoPath;
 
     private List<Player> players;
     private Step step;
@@ -29,8 +35,13 @@ public class Game
     private List<Integer> whiteGuess;
     private List<Integer> blackGuess;
 
-    public Game()
+    private List<String> whiteWords;
+    private List<String> blackWords;
+
+    public Game(String path)
     {
+        dicoPath = path;
+        System.out.println("path : " + path);
         r = new Random();
         players = new ArrayList<>();
         won = Winner.NONE;
@@ -74,10 +85,47 @@ public class Game
         actionChangeColor.getPlayer().setColor(actionChangeColor.getColor());
     }
 
+    private void fillRandomWords()
+    {
+        Supplier<Stream<String>> dicoSupplier = () -> {
+            try { return Files.lines(Paths.get(dicoPath)); }
+            catch (IOException e) { e.printStackTrace(); return null;}
+        };
+
+        Stream<String> dicoStreamCount = dicoSupplier.get();
+        int nLines = (int)dicoStreamCount.count();
+
+        List<Integer> indexes = new ArrayList<>();
+        while (indexes.size() < 8)
+        {
+            int i = r.nextInt(nLines);
+            if (indexes.indexOf(i) != -1)
+                continue;
+            indexes.add(i);
+        }
+
+        List<String> selectedWords = new ArrayList<>();
+        for (int i : indexes)
+        {
+            Stream<String> dicoStreamGet = dicoSupplier.get();
+            Optional<String> found = dicoStreamGet.skip(i).findFirst();
+            String word = found.get();
+            selectedWords.add(word);
+        }
+
+        whiteWords = new ArrayList<>();
+        whiteWords.addAll(selectedWords.subList(0, 4));
+        blackWords = new ArrayList<>();
+        blackWords.addAll(selectedWords.subList(4, 8));
+
+        DecryptoBroadcast.broadcastWords(this);
+    }
+
     public boolean start()
     {
         if (getColored(Color.BLACK).isEmpty() || getColored(Color.WHITE).isEmpty())
             return false;
+        fillRandomWords();
         nextRound();
         paused = false;
         return true;
@@ -357,6 +405,18 @@ public class Game
     public void setBlackCode(List<Integer> blackCode)
     {
         this.blackCode = blackCode;
+    }
+
+    @JsonIgnore
+    public List<String> getWhiteWords()
+    {
+        return whiteWords;
+    }
+
+    @JsonIgnore
+    public List<String> getBlackWords()
+    {
+        return blackWords;
     }
 
     private List<Integer> getColorCode(Color color)

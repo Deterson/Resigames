@@ -3,10 +3,7 @@ package websocket;
 import decrypto.Color;
 import decrypto.Game;
 import decrypto.Player;
-import decrypto.action.Action;
-import decrypto.action.ActionChangeColor;
-import decrypto.action.ActionCode;
-import decrypto.action.ActionRename;
+import decrypto.action.*;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.websocket.Session;
@@ -92,6 +89,32 @@ public class DecryptoBroadcast
                 s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(bActionCode));
                 }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void broadcastWords(Game game)
+    {
+        try
+        {
+            ActionWords wActionWords = new ActionWords(game.getWhiteWords());
+            ActionWords bActionWords = new ActionWords(game.getBlackWords());
+
+            for (Player p : game.getPlayers())
+            {
+                ActionWords toSend;
+                if (p.getColor().equals(Color.WHITE)) // change toSend according to player color
+                    toSend = wActionWords;
+                else
+                    toSend = bActionWords;
+                for (Session s : p.getWsSessions())
+                    synchronized (s)
+                    {
+                        s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(toSend));
+                    }
+            }
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }

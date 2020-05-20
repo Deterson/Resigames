@@ -31,8 +31,10 @@
     <title>Decrypto entre bons p'tits potes</title>
 </head>
 <body ng-controller="decryptoCtrl">
+<div> vous êtes player {{playerId}} de couleur <b>{{playerColor}}</b></div>
+<br/>
 <div> state: {{state}}</div>
-
+<br/>
 <div ng-switch="state">
 
     <div ng-switch-when="SETUP">
@@ -53,9 +55,9 @@
 
     </div>
     <div ng-switch-when="CLUEWRITING">
-        <label>clue for n°{{$parent.code[0]}}: <input type="text" ng-model="$parent.clues[0]"></label><br/>
-        <label>clue for n°{{$parent.code[1]}}: <input type="text" ng-model="$parent.clues[1]"></label><br/>
-        <label>clue for n°{{$parent.code[2]}}: <input type="text" ng-model="$parent.clues[2]"></label><br/>
+        <label>clue for n°{{$parent.code[0]}} <b>{{$parent.words[$parent.code[0] - 1]}}</b>: <input type="text" ng-model="$parent.clues[0]"></label><br/>
+        <label>clue for n°{{$parent.code[1]}} <b>{{$parent.words[$parent.code[1] - 1]}}</b>: <input type="text" ng-model="$parent.clues[1]"></label><br/>
+        <label>clue for n°{{$parent.code[2]}} <b>{{$parent.words[$parent.code[2] - 1]}}</b>: <input type="text" ng-model="$parent.clues[2]"></label><br/>
         <button ng-click="sendClues()">Send clues</button>
     </div>
     <div ng-switch-when="WHITEGUESS">
@@ -85,7 +87,38 @@
         <div ng-show="game.won === 'DRAW'">it's a draw!</div>
         <div ng-show="game.won !== 'DRAW'">winner : {{$parent.game.won}}</div>
     </div>
+</div>
 
+<div>
+    Mots:
+    <table>
+        <thead>
+        <tr>
+            <th>Mot #1</th>
+            <th>Mot #2</th>
+            <th>Mot #3</th>
+            <th>Mot #4</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{words[0]}}</td>
+            <td>{{words[1]}}</td>
+            <td>{{words[2]}}</td>
+            <td>{{words[3]}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    Score: <br/>
+    Interceptions: {{}}<br/>
+    Malentendus  : {{}}<br/>
+    <br/>
+    <br/>
+    Adversaires:<br/>
+    Interceptions: {{}}<br/>
+    Malentendus  : {{}}<br/>
 </div>
 </body>
 </html>
