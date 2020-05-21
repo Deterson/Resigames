@@ -20,7 +20,6 @@ public class DecryptoWS
     private static Game game = null; // global game
     private Player player; // this instance's player
     private Session wsSession; // this ws Session
-    private HttpSession httpSession;
 
     public DecryptoWS()
     {
@@ -31,7 +30,7 @@ public class DecryptoWS
     public void onOpen(Session session, EndpointConfig config)
     {
         this.wsSession = session;
-        this.httpSession = (HttpSession)config.getUserProperties().get("httpSession");
+        HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
         String requestSession = session.getRequestParameterMap().get("requestSessionId").get(0);
 
         if (game == null)

@@ -1,6 +1,7 @@
 package decrypto;
 
 import decrypto.action.*;
+import decrypto.sheet.Sheet;
 import exception.PlayerMissingException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import websocket.DecryptoBroadcast;
@@ -38,6 +39,10 @@ public class Game
     private List<String> whiteWords;
     private List<String> blackWords;
 
+    private Sheet whiteSheet;
+    private Sheet blackSheet;
+
+
     public Game(String path)
     {
         dicoPath = path;
@@ -52,6 +57,9 @@ public class Game
         whiteCode = blackCode = null;
         emptyGuesses();
         emptyClues();
+
+        whiteSheet = new Sheet();
+        blackSheet = new Sheet();
     }
 
     @JsonIgnore
@@ -134,11 +142,18 @@ public class Game
     public boolean addClues(ActionClues actionClues)
     {
         if (actionClues.getPlayer().getColor() == Color.WHITE)
-            whiteClues = actionClues.getClues();
+        {
+            if (whiteClues == null) // prevents from re-sending clues after chrono
+                whiteClues = actionClues.getClues();
+        }
         else
-            blackClues = actionClues.getClues();
+        {
+            if (blackClues == null)
+                blackClues = actionClues.getClues();
+        }
         if (whiteClues != null && blackClues != null) // changes step
         {
+            whiteSheet.addRoundClues(whiteClues); // only show white clues on sheet
             step = Step.WHITEGUESS;
             return true;
         }
@@ -148,6 +163,7 @@ public class Game
     private void goToBlackGuess()
     {
         step = Step.BLACKGUESS;
+        blackSheet.addRoundClues(blackClues);
         emptyGuesses();
     }
 
@@ -159,6 +175,8 @@ public class Game
         DecryptoBroadcast.sendCodesToCluers(this);
         emptyGuesses();
         emptyClues();
+        whiteSheet.nextRound();
+        blackSheet.nextRound();
         score.nextRound();
     }
 
@@ -177,6 +195,10 @@ public class Game
         {
             if (step == Step.BLACKGUESS) // end of round
             {
+                blackSheet.addRoundGuesses(whiteGuess, blackGuess);
+                blackSheet.addRoundCode(blackCode);
+                blackSheet.transcriptRoundOnClueList();
+
                 if (guessResult) // GAME OVER
                 {
                     step = Step.END;
@@ -186,7 +208,12 @@ public class Game
                 step = Step.ENDROUND;
             }
             else
+            {
+                whiteSheet.addRoundGuesses(whiteGuess, blackGuess);
+                whiteSheet.addRoundCode(whiteCode);
+                whiteSheet.transcriptRoundOnClueList();
                 goToBlackGuess();
+            }
             return true;
         }
         return false;
@@ -485,5 +512,25 @@ public class Game
             if (!p.isReady())
                 return false;
         return true;
+    }
+
+    public Sheet getWhiteSheet()
+    {
+        return whiteSheet;
+    }
+
+    public void setWhiteSheet(Sheet whiteSheet)
+    {
+        this.whiteSheet = whiteSheet;
+    }
+
+    public Sheet getBlackSheet()
+    {
+        return blackSheet;
+    }
+
+    public void setBlackSheet(Sheet blackSheet)
+    {
+        this.blackSheet = blackSheet;
     }
 }
