@@ -1,5 +1,6 @@
 package decrypto;
 
+import com.sun.org.apache.xpath.internal.WhitespaceStrippingElementMatcher;
 import decrypto.action.*;
 import decrypto.sheet.Sheet;
 import exception.PlayerMissingException;
@@ -189,17 +190,17 @@ public class Game
         else
             blackGuess = actionGuess.getGuesses();
 
-        boolean guessResult = guessResult(actionGuess);
-
         if (whiteGuess != null && blackGuess != null) // end of guess
         {
+            applyGuessesToScore();
+
             if (step == Step.BLACKGUESS) // end of round
             {
                 blackSheet.addRoundGuesses(whiteGuess, blackGuess);
                 blackSheet.addRoundCode(blackCode);
                 blackSheet.transcriptRoundOnClueList();
 
-                if (guessResult) // GAME OVER
+                if (score.isGameOver()) // GAME OVER
                 {
                     step = Step.END;
                     won = score.whoWon();
@@ -219,40 +220,30 @@ public class Game
         return false;
     }
 
-
-    public boolean guessResult(ActionGuess actionGuess) // TODO need a guessColor in Game attributes, coz that's ugly af
+    public void applyGuessesToScore()
     {
-        Player p = actionGuess.getPlayer();
         if (step == Step.WHITEGUESS)
         {
-            if (p.getColor() == Color.WHITE)
-                return applyDecryptoz(actionGuess);
-            return applyInterception(actionGuess);
+            applyDecrypto(whiteGuess, whiteCode, Color.WHITE);
+            applyInterception(blackGuess, whiteCode, Color.BLACK);
         }
-        if (step == Step.BLACKGUESS)
+        else
         {
-            if (p.getColor() == Color.BLACK)
-                return applyDecryptoz(actionGuess);
-            return applyInterception(actionGuess);
+            applyDecrypto(blackGuess, blackCode, Color.BLACK);
+            applyInterception(whiteGuess, blackCode, Color.WHITE);
         }
-        throw new IllegalStateException("tried to apply guess while neither in WHITEGUESS nor BLACKGUESS step");
     }
 
-    private boolean applyInterception(ActionGuess actionGuess)
+    private void applyInterception(List<Integer> guess, List<Integer> code, Color whoIntercepts)
     {
-        List<Integer> colorCode = getColorCode(actionGuess.getPlayer().getColor());
-        if (actionGuess.getGuesses().equals(colorCode))
-            return score.add(Token.INTERCEPTION, actionGuess.getPlayer().getColor());
-        return false;
+        if (guess.equals(code))
+            score.add(Token.INTERCEPTION, whoIntercepts);
     }
 
-    private boolean applyDecryptoz(ActionGuess actionGuess)
+    private void applyDecrypto(List<Integer> guess, List<Integer> code, Color whoDecrypts)
     {
-        List<Integer> colorCode = getColorCode(actionGuess.getPlayer().getColor());
-
-        if (!actionGuess.getGuesses().equals(colorCode))
-            return score.add(Token.MISGUESS, actionGuess.getPlayer().getColor());
-        return false;
+        if (!guess.equals(code))
+            score.add(Token.MISGUESS, whoDecrypts);
     }
 
 

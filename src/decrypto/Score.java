@@ -14,8 +14,7 @@ public class Score
         round = whiteInterception = whiteMisguess = blackInterception = blackMisguess = 0;
     }
 
-    // TODO make it return void and check game over differently
-    public boolean add(Token token, Color color) // returns true if game is over
+    public void add(Token token, Color color) // returns true if game is over
     {
         if (token == Token.MISGUESS)
         {
@@ -31,8 +30,6 @@ public class Score
             else
                 blackInterception++;
         }
-
-        return isGameOver();
     }
 
     public boolean isGameOver()
