@@ -120,5 +120,42 @@
     Interceptions: {{theirInterceptions}}<br/>
     Malentendus  : {{theirMalentendus}}<br/>
 </div>
+
+<br/>
+<br/>
+<div>
+    <div>
+        Feuille blanche
+        <div ng-repeat="roundBlock in game.whiteSheet.roundBlocks">
+            <b>Round {{$index}}</b>
+            <div>{{roundBlock.clues[0]}} / {{roundBlock.guesses[playerColor][0]}} / {{roundBlock.code[0]}}</div>
+            <div>{{roundBlock.clues[1]}} / {{roundBlock.guesses[playerColor][1]}} / {{roundBlock.code[1]}}</div>
+            <div>{{roundBlock.clues[2]}} / {{roundBlock.guesses[playerColor][2]}} / {{roundBlock.code[2]}}</div>
+        </div>
+
+        <div> Liste des indices
+            <div ng-repeat="x in [0, 1, 2, 3] track by $index">Mot {{x + 1}} :
+                <div ng-repeat="clue in game.whiteSheet.clueLists[x].clues">{{clue}}, </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        Feuille noire
+        <div ng-repeat="roundBlock in game.blackSheet.roundBlocks">
+            <b>Round {{$index + 1}}</b>
+            <div>{{roundBlock.clues[0]}} / {{roundBlock.guesses[playerColor][0]}} / {{roundBlock.code[0]}}</div>
+            <div>{{roundBlock.clues[1]}} / {{roundBlock.guesses[playerColor][1]}} / {{roundBlock.code[1]}}</div>
+            <div>{{roundBlock.clues[2]}} / {{roundBlock.guesses[playerColor][2]}} / {{roundBlock.code[2]}}</div>
+        </div>
+
+        <div> Liste des indices
+            <div ng-repeat="x in [0, 1, 2, 3] track by $index">Mot {{x + 1}} :
+                <div ng-repeat="clue in game.blackSheet.clueLists[x].clues">{{clue}}, </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 </body>
 </html>
