@@ -32,6 +32,27 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.words = ["???", "???", "???", "???"];
 
+
+    /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+    $scope.openNav = function() {
+        document.getElementById("mySidebar").style.width = "500px";
+    };
+
+    /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+    $scope.closeNav = function() {
+        document.getElementById("mySidebar").style.width = "0";
+    };
+
+    $scope.testToasts = function() {
+        $('#toast-1').toast({delay: 3000}).toast('show');
+        $('#toast-2').toast({delay: 4500}).toast('show');
+        $('#toast-3').toast({autohide: false}).toast('show');
+    };
+
+    // opens sidebar at begining
+    $scope.openNav();
+
+
     function resetCodes()
     {
         $scope.code = null;

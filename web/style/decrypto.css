@@ -1,0 +1,121 @@
+/* Blocks */
+
+.basic-block {
+    margin-left: 25px;
+    margin-right: 25px;
+
+    margin-top: 15px;
+
+    padding: 10px;
+}
+
+.word-header {
+ text-align: center;
+}
+
+.word-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.word-label {
+    display: flex;
+
+    width: 150px;
+    height: 150px;
+
+    justify-content: center;
+    align-items: center;
+
+    font-size: 25px;
+    color: white;
+    background-color: indianred;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.round-block {
+    flex: 0 50%;
+}
+
+div[disabled]
+{
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* The sidebar menu */
+.sidebar {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    right: 0;
+    background-color: #f8f9fa; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
+
+/* Position and style the close button (top right corner) */
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+    transition: margin-left .5s; /* If you want a transition effect */
+    padding: 20px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
+}
+
+.player-table {
+    margin: 15px;
+    width: 100%;
+}
+
+.player-table td {
+    color: black;
+}
+
+.sheet {
+    border-radius: 25px;
+    padding: 5px;
+}
+
+.white-sheet {
+    background-color: antiquewhite;
+    color: orange;
+}
+
+.white-sheet th, .white-sheet td {
+    color:orange;
+    border-top-color: orange !important;
+    border-bottom-color: orange !important;
+}
+
+.black-sheet {
+    background-color: dimgray;
+    color: white;
+}
+
+.black-sheet th, .black-sheet td {
+    color:white;
+    border-top-color: white !important;
+    border-bottom-color: white !important;
+}
