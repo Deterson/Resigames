@@ -95,9 +95,10 @@ public class DecryptoWS
 
             case "start":
                 //do action
-                game.start();
+                boolean started = game.start();
                 //tell clients
-                DecryptoBroadcast.broadcastUpdate(game);
+                if (started)
+                    DecryptoBroadcast.broadcastUpdate(game);
                 break;
 
             case "clues":

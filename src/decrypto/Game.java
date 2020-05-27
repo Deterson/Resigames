@@ -132,6 +132,8 @@ public class Game
 
     public boolean start()
     {
+        if (step != Step.SETUP)
+            return false;
         if (getColored(Color.BLACK).isEmpty() || getColored(Color.WHITE).isEmpty())
             return false;
         fillRandomWords();
