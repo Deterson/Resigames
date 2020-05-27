@@ -134,7 +134,7 @@ public class Game
     {
         if (step != Step.SETUP)
             return false;
-        if (getColored(Color.BLACK).isEmpty() || getColored(Color.WHITE).isEmpty())
+        if (getColored(Color.BLACK).size() < 2 || getColored(Color.WHITE).size() < 2)
             return false;
         fillRandomWords();
         nextRound();
