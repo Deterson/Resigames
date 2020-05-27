@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @JsonIgnoreProperties({"wsSessions playerIds"})
 public class Player
 {
-    private static AtomicInteger playerIds = new AtomicInteger(0);
+    private static AtomicInteger playerIds = new AtomicInteger(1);
     private final int id;
     private Color color;
     private String name;
