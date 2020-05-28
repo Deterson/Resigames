@@ -112,6 +112,7 @@
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
                 </div>
             </div>
+
             <div class="col-sm-3" ng-disabled="state !== 'CLUEWRITING'">
                 <div>
 
@@ -126,17 +127,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3" >
+            <div class="col-sm-3" ng-disabled="state !== 'WHITEGUESS'">
                 <div>
                     <div style="height: 200px;">
                         <label> Indice : <b ng-show="game.whiteClues[0]">"{{game.whiteClues[0]}}"</b><br/>
-                            <select ng-model="guesses[0]" ng-change="changeGuess(0)" ng-options="n for n in guessesNumbers[0]"></select>
+                            <select ng-model="guesses[0]" ng-options="n for n in numbers"></select>
                         </label><br/>
                         <label> Indice : <b ng-show="game.whiteClues[1]">"{{game.whiteClues[1]}}"</b><br/>
-                            <select ng-model="guesses[1]" ng-change="changeGuess(1)" ng-options="n for n in guessesNumbers[1]"></select>
+                            <select ng-model="guesses[1]" ng-options="n for n in numbers"></select>
                         </label><br/>
                         <label> Indice : <b ng-show="game.whiteClues[2]">"{{game.whiteClues[2]}}"</b><br/>
-                            <select ng-model="guesses[2]" ng-change="changeGuess(2)" ng-options="n for n in guessesNumbers[2]"></select>
+                            <select ng-model="guesses[2]" ng-options="n for n in numbers"></select>
                         </label><br/>
                     </div>
                     <div class="row word-container">
@@ -144,20 +145,23 @@
                     </div>
                 </div>
             </div>
-            <div>
-                <div style="height: 200px;">
-                    <label> Indice : <b ng-show="game.blackClues[0]">"{{game.blackClues[0]}}"</b><br/>
-                        <select ng-model="guesses[0]" ng-change="changeGuess(0)" ng-options="n for n in guessesNumbers[0]"></select>
-                    </label><br/>
-                    <label> Indice : <b ng-show="game.blackClues[1]">"{{game.blackClues[1]}}"</b><br/>
-                        <select ng-model="guesses[1]" ng-change="changeGuess(1)" ng-options="n for n in guessesNumbers[1]"></select>
-                    </label><br/>
-                    <label> Indice : <b ng-show="game.blackClues[2]">"{{game.blackClues[2]}}"</b><br/>
-                        <select ng-model="guesses[2]" ng-change="changeGuess(2)" ng-options="n for n in guessesNumbers[2]"></select>
-                    </label><br/>
-                </div>
-                <div class="row word-container">
-                    <button class="btn btn-primary" ng-click="sendGuesses()">Envoyer</button>
+
+            <div class="col-sm-3" ng-disabled="state !== 'BLACKGUESS'">
+                <div>
+                    <div style="height: 200px;">
+                        <label> Indice : <b ng-show="game.blackClues[0]">"{{game.blackClues[0]}}"</b><br/>
+                            <select ng-model="guesses[0]" ng-options="n for n in numbers"></select>
+                        </label><br/>
+                        <label> Indice : <b ng-show="game.blackClues[1]">"{{game.blackClues[1]}}"</b><br/>
+                            <select ng-model="guesses[1]" ng-options="n for n in numbers"></select>
+                        </label><br/>
+                        <label> Indice : <b ng-show="game.blackClues[2]">"{{game.blackClues[2]}}"</b><br/>
+                            <select ng-model="guesses[2]" ng-options="n for n in numbers"></select>
+                        </label><br/>
+                    </div>
+                    <div class="row word-container">
+                        <button class="btn btn-primary" ng-click="sendGuesses()">Envoyer</button>
+                    </div>
                 </div>
             </div>
 

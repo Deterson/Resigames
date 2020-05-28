@@ -28,9 +28,9 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     $scope.playerColor = null;
     $scope.state = "setup";
 
-    $scope.isReady = false;
-
     $scope.words = ["", "", "", ""];
+
+    $scope.numbers = [1, 2, 3, 4];
 
 
     /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
@@ -67,7 +67,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function resetGuesses()
     {
-        $scope.guesses = [];
+        $scope.guesses = [1, 1, 1];
     }
 
     function resetNumbers() {
@@ -79,16 +79,27 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.blackClueList = [];
     }
 
+    function resetReady() {
+        $scope.isReady = false;
+    }
+
+    resetReady();
     resetNumbers();
     resetCodes();
     resetClues();
     resetGuesses();
     resetClueLists();
 
-    $scope.changeGuess = function()
-    {
-        recalculGuessNumbers();
-    };
+    function resetInputs() {
+        resetGuesses();
+        resetReady();
+    }
+
+    function resetInputsRound() {
+        resetInputs();
+        resetClues();
+    }
+
 
     function showWhiteCode()
     {
@@ -98,38 +109,6 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     function showBlackCode()
     {
         alert("le code des noirs était " + $scope.blackCode);
-    }
-
-    // used in ng-change, constantly removes already selected numbers to avoid duplicates in guesses
-    // (when a player selects "1" as their #1 clue guess, they won't be able to select "1" in other guesses)
-    // alright so this one seems complicated because you'd think "oOh bUt wAit onLy oNe ArraY suFfice"
-    // but NO you need to have a number array for each guess
-    // and I debbuged this for HOURS, because if you choose, say, "1" and you remove it from numbers
-    // so that it's like "[2, 3, 4]" well the ng-options in the jsp FALLS APPART AND NOTHING WORKS NO MORE BECAUSE
-    // IT'S TRYING TO SELECT SOMETHING THAT IS NOT IN ITS ng-options ANYMORE HELP ME IT'S 3AM
-    function recalculGuessNumbers()
-    {
-        resetNumbers();
-
-        // TODO au moins refactoriser mdr
-
-        if ($scope.guesses[0] !== undefined)
-        {
-            $scope.guessesNumbers[1].splice($scope.guessesNumbers[1].indexOf($scope.guesses[0]), 1);
-            $scope.guessesNumbers[2].splice($scope.guessesNumbers[2].indexOf($scope.guesses[0]), 1);
-        }
-
-        if ($scope.guesses[1] !== undefined)
-        {
-            $scope.guessesNumbers[0].splice($scope.guessesNumbers[0].indexOf($scope.guesses[1]), 1);
-            $scope.guessesNumbers[2].splice($scope.guessesNumbers[2].indexOf($scope.guesses[1]), 1);
-        }
-
-        if ($scope.guesses[2] !== undefined)
-        {
-            $scope.guessesNumbers[0].splice($scope.guessesNumbers[0].indexOf($scope.guesses[2]), 1);
-            $scope.guessesNumbers[1].splice($scope.guessesNumbers[1].indexOf($scope.guesses[2]), 1);
-        }
     }
 
 
@@ -230,10 +209,14 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         // checks when steps change, and do things accordingly
         if ($scope.game.step === SETUP && game.step !== SETUP)
             $scope.closeNav();
-        if ($scope.game.step === WHITEGUESS && game.step === BLACKGUESS)
+        if ($scope.game.step === WHITEGUESS && game.step === BLACKGUESS) {
+            resetInputs();
             showWhiteCode();
-        if ($scope.game.step === BLACKGUESS && game.step !== BLACKGUESS)
+        }
+        if ($scope.game.step === BLACKGUESS && game.step !== BLACKGUESS) {
+            resetInputsRound();
             showBlackCode();
+        }
 
         $scope.game = game;
         changeState();
