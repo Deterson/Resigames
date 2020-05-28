@@ -170,7 +170,7 @@ public class Game
         emptyGuesses();
     }
 
-    private void nextRound() // TODO historique
+    private void nextRound()
     {
         step = Step.CLUEWRITING;
         findNextCluers();
@@ -178,9 +178,16 @@ public class Game
         DecryptoBroadcast.sendCodesToCluers(this);
         emptyGuesses();
         emptyClues();
+        emptyReadys();
         whiteSheet.nextRound();
         blackSheet.nextRound();
         score.nextRound();
+    }
+
+    private void emptyReadys()
+    {
+        for (Player p : players)
+            p.setReady(false);
     }
 
     // changes "won" attribute if any winner
