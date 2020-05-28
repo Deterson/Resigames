@@ -14,6 +14,6 @@ public class GameHttp extends HttpServlet
         String sessionId = request.getSession().getId();
         System.out.println(sessionId);
         request.setAttribute("ownId", sessionId);
-        this.getServletContext().getRequestDispatcher("/WEB-INF/decrypto.jsp").forward(request, response);
+        this.getServletContext().getRequestDispatcher("/WEB-INF/decrypto/decrypto.jsp").forward(request, response);
     }
 }

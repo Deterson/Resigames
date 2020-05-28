@@ -30,7 +30,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.isReady = false;
 
-    $scope.words = ["???", "???", "???", "???"];
+    $scope.words = ["", "", "", ""];
+
+    $scope.whiteClueList = [[], [], [], []];
+    $scope.blackClueList = [[], [], [], []];
 
 
     /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
@@ -70,16 +73,68 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.guesses = [];
     }
 
+    function resetNumbers() {
+        $scope.guessesNumbers = [[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]];
+    }
+
+    resetNumbers();
     resetCodes();
     resetClues();
     resetGuesses();
+
+    $scope.changeGuess = function()
+    {
+        recalculGuessNumbers();
+    };
+
+    function showWhiteCode()
+    {
+        alert("le code des blancs était " + $scope.whiteCode);
+    }
+
+    function showBlackCode()
+    {
+        alert("le code des noirs était " + $scope.blackCode);
+    }
+
+    // used in ng-change, constantly removes already selected numbers to avoid duplicates in guesses
+    // (when a player selects "1" as their #1 clue guess, they won't be able to select "1" in other guesses)
+    // alright so this one seems complicated because you'd think "oOh bUt wAit onLy oNe ArraY suFfice"
+    // but NO you need to have a number array for each guess
+    // and I debbuged this for HOURS, because if you choose, say, "1" and you remove it from numbers
+    // so that it's like "[2, 3, 4]" well the ng-options in the jsp FALLS APPART AND NOTHING WORKS NO MORE BECAUSE
+    // IT'S TRYING TO SELECT SOMETHING THAT IS NOT IN ITS ng-options ANYMORE HELP ME IT'S 3AM
+    function recalculGuessNumbers()
+    {
+        resetNumbers();
+
+        // TODO au moins refactoriser mdr
+
+        if ($scope.guesses[0] !== undefined)
+        {
+            $scope.guessesNumbers[1].splice($scope.guessesNumbers[1].indexOf($scope.guesses[0]), 1);
+            $scope.guessesNumbers[2].splice($scope.guessesNumbers[2].indexOf($scope.guesses[0]), 1);
+        }
+
+        if ($scope.guesses[1] !== undefined)
+        {
+            $scope.guessesNumbers[0].splice($scope.guessesNumbers[0].indexOf($scope.guesses[1]), 1);
+            $scope.guessesNumbers[2].splice($scope.guessesNumbers[2].indexOf($scope.guesses[1]), 1);
+        }
+
+        if ($scope.guesses[2] !== undefined)
+        {
+            $scope.guessesNumbers[0].splice($scope.guessesNumbers[0].indexOf($scope.guesses[2]), 1);
+            $scope.guessesNumbers[1].splice($scope.guessesNumbers[1].indexOf($scope.guesses[2]), 1);
+        }
+    }
+
+
 
     $scope.renameField = "";
 
     let socket = null;
 
-    function launchGame() {
-    }
 
     function handleYourPlayerId(packet) {
         $scope.playerId = packet.id;
@@ -122,6 +177,14 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     }
 
     function handleUpdate(game) {
+        // checks when steps change, and do things accordingly
+        if ($scope.game.step === SETUP && game.step !== SETUP)
+            $scope.closeNav();
+        if ($scope.game.step === WHITEGUESS && game.step === BLACKGUESS)
+            showWhiteCode();
+        if ($scope.game.step === BLACKGUESS && game.step !== BLACKGUESS)
+            showBlackCode();
+
         $scope.game = game;
         changeState();
         refreshPlayerColor();
@@ -197,7 +260,6 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
         socket.onopen = function() {
             console.log("oui opené");
-            launchGame();
         };
 
         socket.onclose = function() {

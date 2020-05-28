@@ -30,7 +30,7 @@ public class DecryptoParser
         try {
             ActionUpdate act = new ActionUpdate();
             List<String> blackClues = game.getBlackClues();
-            game.setBlackClues(Arrays.asList("ptdr", "ptdr", "ptdr"));
+            game.setBlackClues(Arrays.asList("[caché]", "[caché]", "[caché]"));
             act.setGame(game);
             String ret = new ObjectMapper().writeValueAsString(act);
             game.setBlackClues(blackClues);
