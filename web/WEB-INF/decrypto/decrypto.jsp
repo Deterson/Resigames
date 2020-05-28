@@ -167,7 +167,7 @@
 
         </div>
 
-        <div>
+        <div ng-show="state === 'ENDROUND'">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="word-container">
