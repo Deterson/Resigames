@@ -32,9 +32,6 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.words = ["", "", "", ""];
 
-    $scope.whiteClueList = [[], [], [], []];
-    $scope.blackClueList = [[], [], [], []];
-
 
     /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
     $scope.openNav = function() {
@@ -77,10 +74,16 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.guessesNumbers = [[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]];
     }
 
+    function resetClueLists() {
+        $scope.whiteClueList = [];
+        $scope.blackClueList = [];
+    }
+
     resetNumbers();
     resetCodes();
     resetClues();
     resetGuesses();
+    resetClueLists();
 
     $scope.changeGuess = function()
     {
@@ -167,6 +170,53 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         }
     }
 
+    function refreshClueLists()
+    {
+        resetClueLists();
+
+        refreshWhiteClueLists();
+        refreshBlackClueLists();
+    }
+
+    function refreshWhiteClueLists() {
+        let maxSize = 0;
+        $scope.game.whiteSheet.clueLists.forEach((cl) => {
+            if (cl.clues.length > maxSize)
+                maxSize = cl.clues.length;
+        });
+
+        for (let i = 0; i < maxSize; i++)
+            $scope.whiteClueList.push([[], [], [], []]);
+
+        for (let i = 0; i < maxSize; i++) {
+            for (let j = 0; j < 4; j++) {
+                let mot = $scope.game.whiteSheet.clueLists[j].clues[i];
+                if (mot !== undefined)
+                    $scope.whiteClueList[i][j] = mot;
+            }
+        }
+    }
+
+    function refreshBlackClueLists()
+    {
+        let maxSize = 0;
+        $scope.game.blackSheet.clueLists.forEach((cl) => {
+            if (cl.clues.length > maxSize)
+                maxSize = cl.clues.length;
+        });
+
+        for (let i = 0; i < maxSize; i++)
+            $scope.blackClueList.push([[], [], [], []]);
+
+        for (let i = 0; i < maxSize; i++) {
+            for (let j = 0; j < 4; j++) {
+                let mot = $scope.game.blackSheet.clueLists[j].clues[i];
+                if (mot !== undefined)
+                    $scope.blackClueList[i][j] = mot;
+            }
+        }
+    }
+
     function getClientPlayer() {
         return findPlayerFromId($scope.playerId);
     }
@@ -189,6 +239,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         changeState();
         refreshPlayerColor();
         refreshScore();
+        refreshClueLists();
     }
 
     function handleWordsReceive(words) {

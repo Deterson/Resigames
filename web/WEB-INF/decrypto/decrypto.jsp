@@ -198,23 +198,11 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                        </tr>
-                        <tr>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>{clue}}</td>
-                            <td></td>
-                            <td></td>
+                        <tr ng-repeat="clues in whiteClueList">
+                            <td>{{clues[0]}}</td>
+                            <td>{{clues[1]}}</td>
+                            <td>{{clues[2]}}</td>
+                            <td>{{clues[3]}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -245,23 +233,11 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                        </tr>
-                        <tr>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td>{clue}}</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>{clue}}</td>
-                            <td></td>
-                            <td></td>
+                        <tr ng-repeat="clues in blackClueList">
+                            <td>{{clues[0]}}</td>
+                            <td>{{clues[1]}}</td>
+                            <td>{{clues[2]}}</td>
+                            <td>{{clues[3]}}</td>
                         </tr>
                         </tbody>
                     </table>
