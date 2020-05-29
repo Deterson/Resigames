@@ -106,10 +106,11 @@
 
             <div class="col-sm-3">
                 <div class="card-container">
-                    <img src="img/Card.png" class="img-thumbnail" style="height: 250px;">
+                    <img ng-src="img/{{cardPngPath}}" class="img-thumbnail" style="height: 250px;">
+                    <span ng-show="state === 'CLUEWRITING'">{{code[0] + '.' + code[1] + '.' + code[2]}}</span>
                 </div>
 
-                <div class="progress mt-2" style="width: 75%; margin: auto">
+                <div ng-show="state === 'CLUEWRITING'" class="progress mt-2" style="width: {{$scope.timerPct}}%; margin: auto">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
                 </div>
             </div>

@@ -32,6 +32,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.numbers = [1, 2, 3, 4];
 
+    $scope.cardPngPath = "backBlack.png";
+
     /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
     $scope.openNav = function() {
         document.getElementById("mySidebar").style.width = "500px";
@@ -129,8 +131,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function refreshPlayerColor() {
         let player = getClientPlayer();
-        if (player !== undefined && player !== null)
+        if (player !== undefined && player !== null) {
             $scope.playerColor = player.color;
+            refreshCodePicture();
+        }
     }
 
     function refreshScore()
@@ -221,6 +225,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.game = game;
         changeState();
         changeStateText();
+
+        refreshCodePicture();
         refreshPlayerColor();
         refreshScore();
         refreshClueLists();
@@ -233,6 +239,23 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function changeStateText() {
         $scope.stateText = calculateStateText();
+    }
+
+    function refreshCodePicture() {
+        if ($scope.code)
+        {
+            if ($scope.playerColor === 'WHITE')
+                $scope.cardPngPath = 'blankWhite.png';
+            else
+                $scope.cardPngPath = 'blankBlack.png';
+        }
+        else
+        {
+            if ($scope.playerColor === 'WHITE')
+                $scope.cardPngPath = 'backWhite.png';
+            else
+                $scope.cardPngPath = 'backBlack.png';
+        }
     }
 
     function calculateStateText()
@@ -307,11 +330,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     }
 
-    function connect(name)
+    function connect()
     {
-        if (name === undefined || name === '')
-            name = 'anonyme';
-
         let preurl = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
         let url = preurl + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
 
