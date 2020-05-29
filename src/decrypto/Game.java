@@ -43,6 +43,8 @@ public class Game
     private Sheet whiteSheet;
     private Sheet blackSheet;
 
+    private String whiteName;
+    private String blackName;
 
     public Game(String path)
     {
@@ -61,6 +63,9 @@ public class Game
 
         whiteSheet = new Sheet();
         blackSheet = new Sheet();
+
+        whiteName = "White Team";
+        blackName = "Black Team";
     }
 
     @JsonIgnore
@@ -88,6 +93,15 @@ public class Game
     {
         actionRename.getPlayer().setName(actionRename.getNewName());
     }
+
+    public void renameTeam(ActionRenameTeam actionRenameTeam)
+    {
+        if (actionRenameTeam.getPlayer().getColor() == Color.WHITE)
+            whiteName = actionRenameTeam.getNewName();
+        else
+            blackName = actionRenameTeam.getNewName();
+    }
+
 
     public void changePlayerColor(ActionChangeColor actionChangeColor)
     {
@@ -532,5 +546,25 @@ public class Game
     public void setBlackSheet(Sheet blackSheet)
     {
         this.blackSheet = blackSheet;
+    }
+
+    public String getWhiteName()
+    {
+        return whiteName;
+    }
+
+    public void setWhiteName(String whiteName)
+    {
+        this.whiteName = whiteName;
+    }
+
+    public String getBlackName()
+    {
+        return blackName;
+    }
+
+    public void setBlackName(String blackName)
+    {
+        this.blackName = blackName;
     }
 }

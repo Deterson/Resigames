@@ -48,6 +48,7 @@
     <span class="navbar-text px-2">{{state}}</span>
     <span class="navbar-text px-2">Joueur {{playerId}}</span>
     <span class="navbar-text px-2">Equipe {{playerColor}}</span>
+    <span class="navbar-text" style="text-align: center">{{stateText}}</span>
 
     <ul class="navbar-nav ml-auto">
         <li><a class="px-2" ng-click="testToasts()">Test Toasts</a></li>
@@ -190,7 +191,7 @@
 
             <div class="col-sm-6">
                 <div class="sheet white-sheet">
-                    <h3>Feuille Blanche</h3>
+                    <h3>{{game.whiteName}}</h3>
 
                     <table class="table word-header">
                         <thead>
@@ -225,7 +226,7 @@
 
             <div class="col-sm-6">
                 <div class="sheet black-sheet">
-                    <h3>Feuille Noire</h3>
+                    <h3>{{game.blackName}}</h3>
 
                     <table class="table word-header">
                         <thead>
@@ -344,7 +345,8 @@
         </table>
 
         <div class="mx-3">
-            <label>Vous renommer: <input type="text" ng-model="renameField"><button class="btn btn-secondary mx-3" ng-click="rename()">Valider</button></label><br/>
+            <label>Vous renommer : <input type="text" ng-model="renameField"><button class="btn btn-secondary mx-3" ng-click="rename()">Valider</button></label><br/>
+            <label>Renommer l'équipe : <input type="text" ng-model="renameTeamField"><button class="btn btn-secondary mx-3" ng-click="renameTeam()">Valider</button></label><br/>
             <button class="btn btn-warning" ng-click="changeColor()">Changer d'équipe</button><br/>
             <button class="btn btn-success my-3" ng-show="game.step === 'SETUP'" ng-click="startGame()">Débuter</button>
         </div>

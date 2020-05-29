@@ -93,6 +93,12 @@ public class DecryptoWS
                 DecryptoBroadcast.broadcastRename(game, actionRename);
                 break;
 
+            case "renameTeam":
+                ActionRenameTeam actionRenameTeam = (ActionRenameTeam)getClassFromJson(message, ActionRenameTeam.class);
+                //do action
+                game.renameTeam(actionRenameTeam);
+                //tell clients
+                DecryptoBroadcast.broadcastUpdate(game);
             case "start":
                 //do action
                 boolean started = game.start();

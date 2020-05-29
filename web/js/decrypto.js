@@ -32,7 +32,6 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.numbers = [1, 2, 3, 4];
 
-
     /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
     $scope.openNav = function() {
         document.getElementById("mySidebar").style.width = "500px";
@@ -113,7 +112,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
 
 
-    $scope.renameField = "";
+    $scope.renameField = '';
+    $scope.renameTeamField = '';
 
     let socket = null;
 
@@ -220,6 +220,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
         $scope.game = game;
         changeState();
+        changeStateText();
         refreshPlayerColor();
         refreshScore();
         refreshClueLists();
@@ -230,18 +231,45 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             $scope.words = words;
     }
 
+    function changeStateText() {
+        $scope.stateText = calculateStateText();
+    }
+
+    function calculateStateText()
+    {
+        switch ($scope.state)
+        {
+            case 'SETUP':
+                return 'Attendez le lancement de la partie';
+            case 'CLUEWRITING':
+                return 'Rédigez vos indices pour le code donné';
+            case 'WHITEGUESS':
+            case 'BLACKGUESS':
+                if (($scope.state === 'WHITEGUESS' && $scope.playerColor === 'WHITE')
+                    || ($scope.state === 'BLACKGUESS' && $scope.playerColor === 'BLACK'))
+                    return 'Déchiffrez le code de votre coéquipier grâce à ses indices';
+                return 'Interceptez le code de l\'adversaire. Aidez-vous des indices précédents';
+            case 'WAIT':
+                return 'Attendez que les autres joueurs décryptent votre code';
+            case 'ENDROUND':
+                return 'cliquez sur le bouton lorsque vous êtes prêt';
+            case 'END':
+                return 'la partie est terminée, les ' + game.won + ' ont gagné';
+        }
+    }
+
     function changeState()
     {
         switch ($scope.game.step) {
             case SETUP :
-                $scope.state = "SETUP";
+                $scope.state = 'SETUP';
                 break;
             case CLUEWRITING:
                 if ($scope.game.whiteCluer.id === $scope.playerId
                     || $scope.game.blackCluer.id === $scope.playerId)
-                    $scope.state = "CLUEWRITING";
+                    $scope.state = 'CLUEWRITING';
                 else
-                    $scope.state = "WAIT";
+                    $scope.state = 'WAIT';
                 break;
 
             case WHITEGUESS:
@@ -270,7 +298,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                 break;
 
             case ENDROUND:
-                $scope.state = "ENDROUND";
+                $scope.state = 'ENDROUND';
                 break;
 
             case END:
@@ -281,8 +309,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function connect(name)
     {
-        if (name === undefined || name === "")
-            name = "anonyme";
+        if (name === undefined || name === '')
+            name = 'anonyme';
 
         let preurl = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
         let url = preurl + window.location.host + '/websocket/decrypto?requestSessionId=' + ownId;
@@ -293,11 +321,11 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             alert('Error: WebSocket is not supported by this browser.');
 
         socket.onopen = function() {
-            console.log("oui opené");
+            console.log('oui opené');
         };
 
         socket.onclose = function() {
-            console.log("nonon closed");
+            console.log('nonon closed');
         };
 
         socket.onmessage = function(message) {
@@ -323,7 +351,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                     $scope.game.step = packet.step;
                     break;
                 case 'code':
-                    console.log("code!");
+                    console.log('code!');
                     if (packet.color === null)
                         $scope.code = packet.code;
                     else if (packet.color === 'WHITE')
@@ -337,6 +365,17 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             console.log($scope.game);
         };
     }
+
+    $scope.renameTeam = function() {
+        console.log($scope.renameTeamField);
+        if (!isAlphaNumerical($scope.renameTeamField))
+            return;
+        let packet = {};
+        packet.type = 'renameTeam';
+        packet.newName = $scope.renameTeamField;
+        socket.send(JSON.stringify(packet));
+        console.log("oui");
+    };
 
     $scope.rename = function() {
         if (!isAlphaNumerical($scope.renameField))
@@ -371,7 +410,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     $scope.sendGuesses = function()
     {
         let packet = {};
-        packet.type = "guess";
+        packet.type = 'guess';
         packet.guesses = $scope.guesses;
         socket.send(JSON.stringify(packet));
     };
@@ -380,7 +419,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     {
         $scope.isReady = !$scope.isReady;
         let packet = {};
-        packet.type = "ready";
+        packet.type = 'ready';
         packet.ready = ready;
         socket.send(JSON.stringify(packet));
     };
@@ -389,10 +428,10 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     {
         if (/^[a-z0-9]+$/i.test(input))
             return true;
-        if (input === undefined || input === null || input === "")
-            alert("valeur non vide pls");
+        if (input === undefined || input === null || input === '')
+            alert('valeur non vide pls');
         else
-            alert("only alphanumerical characters (ouais pélo c'est pas pour tout de suite l'injection SQL)");
+            alert('only alphanumerical characters (ouais pélo c\'est pas pour tout de suite l\'injection SQL)');
         return false;
     }
 
