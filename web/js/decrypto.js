@@ -26,9 +26,9 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.playerId = null;
     $scope.playerColor = null;
-    $scope.state = "setup";
+    $scope.state = 'setup';
 
-    $scope.words = ["", "", "", ""];
+    $scope.words = ['', '', '', ''];
 
     $scope.numbers = [1, 2, 3, 4];
 
@@ -61,6 +61,11 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.blackCode = null;
     }
 
+    function resetInputClues()
+    {
+        $scope.inputClues = ['', '', ''];
+    }
+
     function resetClues()
     {
         $scope.clues = ['', '', ''];
@@ -87,7 +92,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     resetReady();
     resetNumbers();
     resetCodes();
-    resetClues();
+    resetInputClues();
     resetGuesses();
     resetClueLists();
 
@@ -98,7 +103,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function resetInputsRound() {
         resetInputs();
-        resetClues();
+        resetInputClues();
     }
 
 
@@ -151,6 +156,16 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
             $scope.theirInterceptions = $scope.game.score.whiteInterception;
             $scope.theirMalentendus = $scope.game.score.whiteMisguess;
         }
+    }
+
+    function refreshClues()
+    {
+        if ($scope.state === 'WHITEGUESS')
+            $scope.clues = $scope.game.whiteClues;
+        else if ($scope.state === 'BLACKGUESS')
+            $scope.clues = $scope.game.blackClues;
+        else
+            resetClues();
     }
 
     function refreshClueLists()
@@ -210,6 +225,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     }
 
     function handleUpdate(game) {
+        console.log($scope);
         // checks when steps change, and do things accordingly
         if ($scope.game.step === SETUP && game.step !== SETUP)
             $scope.closeNav();
@@ -226,6 +242,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         changeState();
         changeStateText();
 
+        refreshClues();
         refreshCodePicture();
         refreshPlayerColor();
         refreshScore();
@@ -423,7 +440,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     {
         let packet = {};
         packet.type = 'clues';
-        packet.clues = $scope.clues;
+        packet.clues = $scope.inputClues;
         socket.send(JSON.stringify(packet));
     };
 

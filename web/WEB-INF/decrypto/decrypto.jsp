@@ -119,9 +119,9 @@
                 <div>
 
                     <div style="height: 200px;">
-                        <label>Indice <b>n°{{code[0]}}</b>: <input type="text" ng-model="clues[0]"></label>
-                        <label>Indice <b>n°{{code[1]}}</b>: <input type="text" ng-model="clues[1]"></label>
-                        <label>Indice <b>n°{{code[2]}}</b>: <input type="text" ng-model="clues[2]"></label>
+                        <label>Indice <b>n°{{code[0]}}</b>: <input type="text" ng-model="inputClues[0]"></label>
+                        <label>Indice <b>n°{{code[1]}}</b>: <input type="text" ng-model="inputClues[1]"></label>
+                        <label>Indice <b>n°{{code[2]}}</b>: <input type="text" ng-model="inputClues[2]"></label>
                     </div>
 
                     <div class="row word-container">
@@ -129,16 +129,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3" ng-disabled="state !== 'WHITEGUESS'">
+            <div class="col-sm-3" ng-disabled="state !== 'WHITEGUESS' && state !== 'BLACKGUESS'">
                 <div>
                     <div style="height: 200px;">
-                        <label> Indice : <b ng-show="game.whiteClues[0]">"{{game.whiteClues[0]}}"</b><br/>
+                        <label> Indice : <b ng-show="clues[0]">"{{clues[0]}}"</b><br/>
                             <select ng-model="guesses[0]" ng-options="n for n in numbers"></select>
                         </label><br/>
-                        <label> Indice : <b ng-show="game.whiteClues[1]">"{{game.whiteClues[1]}}"</b><br/>
+                        <label> Indice : <b ng-show="clues[1]">"{{clues[1]}}"</b><br/>
                             <select ng-model="guesses[1]" ng-options="n for n in numbers"></select>
                         </label><br/>
-                        <label> Indice : <b ng-show="game.whiteClues[2]">"{{game.whiteClues[2]}}"</b><br/>
+                        <label> Indice : <b ng-show="clues[2]">"{{clues[2]}}"</b><br/>
                             <select ng-model="guesses[2]" ng-options="n for n in numbers"></select>
                         </label><br/>
                     </div>
@@ -148,24 +148,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-3" ng-disabled="state !== 'BLACKGUESS'">
-                <div>
-                    <div style="height: 200px;">
-                        <label> Indice : <b ng-show="game.blackClues[0]">"{{game.blackClues[0]}}"</b><br/>
-                            <select ng-model="guesses[0]" ng-options="n for n in numbers"></select>
-                        </label><br/>
-                        <label> Indice : <b ng-show="game.blackClues[1]">"{{game.blackClues[1]}}"</b><br/>
-                            <select ng-model="guesses[1]" ng-options="n for n in numbers"></select>
-                        </label><br/>
-                        <label> Indice : <b ng-show="game.blackClues[2]">"{{game.blackClues[2]}}"</b><br/>
-                            <select ng-model="guesses[2]" ng-options="n for n in numbers"></select>
-                        </label><br/>
-                    </div>
-                    <div class="row word-container">
-                        <button class="btn btn-primary" ng-click="sendGuesses()">Envoyer</button>
-                    </div>
-                </div>
-            </div>
+
 
         </div>
 
