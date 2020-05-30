@@ -1,10 +1,7 @@
 package websocket;
 
 import com.google.gson.Gson;
-import decrypto.Color;
-import decrypto.Game;
-import decrypto.Player;
-import decrypto.Step;
+import decrypto.*;
 import decrypto.action.*;
 
 import javax.servlet.http.HttpSession;
@@ -13,10 +10,12 @@ import javax.websocket.server.ServerEndpoint;
 import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Timer;
 
 @ServerEndpoint(value = "/websocket/decrypto", configurator=ServletAwareConfig.class)
 public class DecryptoWS
 {
+    private Timer clueTimer;
     private static Game game = null; // global game
     private Player player; // this instance's player
     private Session wsSession; // this ws Session
@@ -29,6 +28,7 @@ public class DecryptoWS
     @OnOpen
     public void onOpen(Session session, EndpointConfig config)
     {
+        clueTimer = new Timer();
         this.wsSession = session;
         HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
         String requestSession = session.getRequestParameterMap().get("requestSessionId").get(0);
@@ -113,13 +113,23 @@ public class DecryptoWS
                 if (!game.checkActionClues(actionClues))
                     return;
                 //do action
-                boolean next = game.addClues(actionClues);
+                int next = game.addClues(actionClues);
+
                 //tell clients
-                if (next)
+                if (next == 1)
+                {
+                    System.out.println("started timer");
+                    clueTimer.schedule(new ClueTask(game), 5000);
+                    DecryptoBroadcast.broadcastClueTimer(game, true);
+                }
+                if (next == 2)
+                {
+                    DecryptoBroadcast.broadcastClueTimer(game, false);
                     DecryptoBroadcast.broadcastUpdateWhiteClues(game); // still hides black clues
+                }
                 break;
             default:
-                System.err.println("received unhandled packet");
+                System.err.println("received unhandled packet of type " + action.getType());
                 break;
 
             case "guess":

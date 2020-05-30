@@ -118,4 +118,23 @@ public class DecryptoBroadcast
             e.printStackTrace();
         }
     }
+
+    public static void broadcastClueTimer(Game game, boolean started)
+    {
+        try {
+            ActionTimer toSend = new ActionTimer(started);
+            for (Player p : game.getPlayers())
+            {
+
+                for (Session s : p.getWsSessions())
+                    synchronized (s)
+                    {
+                        s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(toSend));
+                    }
+            }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

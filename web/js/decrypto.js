@@ -50,6 +50,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $('#toast-3').toast({autohide: false}).toast('show');
     };
 
+
     // opens sidebar at begining
     $scope.openNav();
 
@@ -59,6 +60,11 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.code = null;
         $scope.whiteCode = null;
         $scope.blackCode = null;
+    }
+
+    function resetTimer()
+    {
+        $scope.timerPct = 100;
     }
 
     function resetInputClues()
@@ -89,6 +95,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.isReady = false;
     }
 
+    resetTimer();
     resetReady();
     resetNumbers();
     resetCodes();
@@ -229,6 +236,9 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         // checks when steps change, and do things accordingly
         if ($scope.game.step === SETUP && game.step !== SETUP)
             $scope.closeNav();
+        if ($scope.game.step !== WHITEGUESS && game.step === WHITEGUESS)
+            resetTimer();
+
         if ($scope.game.step === WHITEGUESS && game.step === BLACKGUESS) {
             resetInputs();
             showWhiteCode();
@@ -347,6 +357,21 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     }
 
+    function triggerTimer(){
+        $scope.timerPct = 100;
+        decreaseTimer();
+    }
+
+    const delayTimer = 31500 / 100; // 32 seconds on server side but client needs to send it before so 31,5s
+
+    function decreaseTimer(){
+        $scope.timerPct--;
+        if ($scope.timerPct === 0)
+            $scope.sendClues();
+        else
+            setTimeout(decreaseTimer, delayTimer);
+    }
+
     function connect()
     {
         let preurl = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
@@ -387,6 +412,9 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                 case 'changeStep':
                     $scope.game.step = packet.step;
                     break;
+                case 'timer':
+                    if (packet.started)
+                        triggerTimer();
                 case 'code':
                     console.log('code!');
                     if (packet.color === null)

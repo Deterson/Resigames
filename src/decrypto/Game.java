@@ -1,6 +1,5 @@
 package decrypto;
 
-import com.sun.org.apache.xpath.internal.WhitespaceStrippingElementMatcher;
 import decrypto.action.*;
 import decrypto.sheet.Sheet;
 import exception.PlayerMissingException;
@@ -21,6 +20,7 @@ public class Game
 {
     private Random r;
     private String dicoPath;
+
 
     private List<Player> players;
     private Step step;
@@ -156,25 +156,38 @@ public class Game
         return true;
     }
 
-    public boolean addClues(ActionClues actionClues)
+    // returns 0 if nothing happened, 1 if one side filled their clues, 2 if both
+    public int addClues(ActionClues actionClues)
     {
+        int ret = 0;
         if (actionClues.getPlayer().getColor() == Color.WHITE)
         {
             if (whiteClues == null) // prevents from re-sending clues after chrono
+            {
                 whiteClues = actionClues.getClues();
+                ret = 1;
+            }
         }
         else
         {
             if (blackClues == null)
+            {
                 blackClues = actionClues.getClues();
+                ret = 1;
+            }
         }
         if (whiteClues != null && blackClues != null) // changes step
         {
-            whiteSheet.addRoundClues(whiteClues); // only show white clues on sheet
-            step = Step.WHITEGUESS;
-            return true;
+            goToWhiteGuess();
+            return 2;
         }
-        return false;
+        return ret;
+    }
+
+    public void goToWhiteGuess()
+    {
+        step = Step.WHITEGUESS;
+        whiteSheet.addRoundClues(whiteClues); // only show white clues on sheet
     }
 
     private void goToBlackGuess()
