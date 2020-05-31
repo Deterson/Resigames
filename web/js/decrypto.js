@@ -19,6 +19,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     ENDROUND
     */
 
+$scope.toasts = [];
+
     $scope.ownId = ownId;
 
     $scope.game = {};
@@ -50,6 +52,24 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $('#toast-3').toast({autohide: false}).toast('show');
     };
 
+    function listEquality(l1, l2)
+    {
+        if (l1.length !== l2.length)
+            return false;
+
+        for (let i = 0; i < l1.length; i++)
+            if (l1[i] !== l2[i])
+                return false;
+
+        return true;
+    }
+
+    function getLastRB(color)
+    {
+        if (color === 'WHITE')
+            return $scope.game.whiteSheet.roundBlocks[$scope.game.whiteSheet.roundCount];
+        return $scope.game.blackSheet.roundBlocks[$scope.game.blackSheet.roundCount];
+    }
 
     // opens sidebar at begining
     $scope.openNav();
@@ -98,6 +118,16 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.isReady = false;
     }
 
+    function resetModal() {
+        $scope.modal = {
+            message:'',
+            picPath: 'win.jpg',
+            hasButton: false,
+            buttonMessage: ''
+        };
+    }
+
+    resetModal();
     resetTimer();
     resetReady();
     resetNumbers();
@@ -116,17 +146,75 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         resetInputClues();
     }
 
-
-    function showWhiteCode()
+    $scope.isIntercepted = function(color)
     {
-        alert("le code des blancs était " + $scope.whiteCode);
+        if (color === 'WHITE')
+        {
+            let rb = getLastRB('WHITE');
+            return listEquality(rb.guesses.BLACK, (rb.code));
+        }
+        let rb = getLastRB('BLACK');
+        return listEquality(rb.guesses.WHITE, rb.code);
+    };
+
+    $scope.isMissguessed = function(color)
+    {
+        if (color === 'WHITE')
+        {
+            let rb = getLastRB('WHITE');
+            return !listEquality(rb.guesses.WHITE, rb.code);
+        }
+        let rb = getLastRB('BLACK');
+        return !listEquality(rb.guesses.BLACK, rb.code);
+    };
+
+    function showWhiteCode() {
+        resetModal();
+
+        let intercepted = $scope.isIntercepted('WHITE');
+        let missguessed = $scope.isMissguessed('WHITE');
+        let ourTeam = $scope.playerColor === 'WHITE';
+        let code = getLastRB('WHITE').code;
+
+        showCode(intercepted, missguessed, ourTeam, code);
     }
 
-    function showBlackCode()
-    {
-        alert("le code des noirs était " + $scope.blackCode);
+    function showBlackCode() {
+        resetModal();
+
+        let intercepted = $scope.isIntercepted('BLACK');
+        let missguessed = $scope.isMissguessed('BLACK');
+        let ourTeam = $scope.playerColor === 'BLACK';
+        let code = getLastRB('BLACK').code;
+
+        showCode(intercepted, missguessed, ourTeam, code);
     }
 
+    function showCode(intercepted, missguessed, ourTeam, code)
+    {
+        let codeText = '<b>' + code[0] + '.' + code[1] + '.' + code[2] + '</b>';
+        let message = 'Le code était ' + codeText + '<br/>';
+        if (intercepted)
+            message += ourTeam ? "L'équipe adverse l'a intercepté !"
+            : "Nous l'avons intercepté !";
+        message += '<br/>';
+
+        if (missguessed)
+            message += ourTeam ? "Notre équipe n'a pas réussi à le déchiffrer !"
+                : "L'équipe adverse n'a pas réussi à le déchiffrer !";
+
+        $scope.modal.message = message;
+        if (intercepted)
+            $scope.modal.picPath = 'interception.png';
+        else if (missguessed)
+            $scope.modal.picPath = 'malentendu.png';
+        else if (intercepted && missguessed)
+            $scope.modal.picPath = 'inter-malen.png';
+        else
+            $scope.modal.picPath = 'boite-decrypto.png';
+
+        $('#modal').modal();
+    }
 
 
     $scope.renameField = '';
@@ -244,10 +332,12 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
         if ($scope.game.step === WHITEGUESS && game.step === BLACKGUESS) {
             resetInputs();
+            $scope.game = game;
             showWhiteCode();
         }
         if ($scope.game.step === BLACKGUESS && game.step !== BLACKGUESS) {
             resetInputsRound();
+            $scope.game = game;
             showBlackCode();
         }
 
@@ -272,7 +362,8 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
     }
 
     function refreshCodePicture() {
-        if ($scope.code)
+        if ($scope.state !== SETUP && $scope.state !== ENDROUND
+            && ($scope.game.whiteCluer.id === $scope.playerId || $scope.game.blackCluer.id === $scope.playerId))
         {
             if ($scope.playerColor === 'WHITE')
                 $scope.cardPngPath = 'blankWhite.png';

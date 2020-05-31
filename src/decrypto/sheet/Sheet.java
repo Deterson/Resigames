@@ -44,6 +44,16 @@ public class Sheet
         this.roundBlocks = roundBlocks;
     }
 
+    public int getRoundCount()
+    {
+        return roundCount;
+    }
+
+    public void setRoundCount(int roundCount)
+    {
+        this.roundCount = roundCount;
+    }
+
     public List<ClueList> getClueLists()
     {
         return clueLists;

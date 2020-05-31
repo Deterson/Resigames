@@ -52,7 +52,7 @@
 
     <ul class="navbar-nav ml-auto">
         <li><a class="px-2" ng-click="testToasts()">Test Toasts</a></li>
-        <li><a class="px-2" data-toggle="modal" data-target="#myModal">Test Modal</a></li>
+        <li><a id="btnModal" class="px-2" data-toggle="modal" data-target="#modal">Test Modal</a></li>
         <li><a class="px-2" ng-click="openNav()">Joueurs ({{game.players.length}})</a></li>
     </ul>
 </nav>
@@ -248,16 +248,15 @@
 
 <!-- Player's Modal -->
 
-<div id="myModal" class="modal fade" role="dialog">
+<div id="modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-body">
                 <div style="text-align: center">
-                    <h2>Vous avez gagné</h2>
-                    <img src="img/win.jpg"><br>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Continuer</button>
+                    <span>{{modal.message}}</span>
+                    <img ng-src="img/{{modal.picPath}}"><br>
+                    <button ng-show="modal.hasButton" type="button" class="btn btn-secondary" data-dismiss="modal">{{modal.buttonMessage}}</button>
                 </div>
             </div>
         </div>
