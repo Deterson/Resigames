@@ -419,6 +419,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
                 case 'timer':
                     if (packet.started)
                         triggerTimer();
+                    break;
                 case 'code':
                     console.log('code!');
                     if (packet.color === null)
