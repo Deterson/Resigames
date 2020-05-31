@@ -64,11 +64,14 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     function resetTimer()
     {
+        let bar = document.getElementById("timer");
+        bar.style.width = '100%';
         $scope.timerPct = 100;
     }
 
     function resetInputClues()
     {
+        $scope.cluesSent = false;
         $scope.inputClues = ['', '', ''];
     }
 
@@ -361,14 +364,15 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         $scope.timerPct = 100;
         decreaseTimer();
     }
-
-    const delayTimer = 31500 / 100; // 32 seconds on server side but client needs to send it before so 31,5s
+    // 32 seconds on server side but 31.5s here, so that if client is still witing clues it has time to send it
+    const delayTimer = 31500 / 100;
 
     function decreaseTimer(){
         $scope.timerPct--;
+        document.getElementById('timer').style.width = $scope.timerPct + '%';
         if ($scope.timerPct === 0)
             $scope.sendClues();
-        else
+        else if ($scope.state === CLUEWRITING)
             setTimeout(decreaseTimer, delayTimer);
     }
 
@@ -439,7 +443,6 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
         packet.type = 'renameTeam';
         packet.newName = $scope.renameTeamField;
         socket.send(JSON.stringify(packet));
-        console.log("oui");
     };
 
     $scope.rename = function() {
@@ -466,6 +469,7 @@ decryptoApp.controller('decryptoCtrl', ['$scope', function ($scope) {
 
     $scope.sendClues = function()
     {
+        $scope.cluesSent = true;
         let packet = {};
         packet.type = 'clues';
         packet.clues = $scope.inputClues;

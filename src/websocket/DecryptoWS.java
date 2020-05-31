@@ -119,7 +119,8 @@ public class DecryptoWS
                 if (next == 1)
                 {
                     System.out.println("started timer");
-                    clueTimer.schedule(new ClueTask(game), 5000);
+                    // in seconds;
+                    clueTimer.schedule(new ClueTask(game), 32000);
                     DecryptoBroadcast.broadcastClueTimer(game, true);
                 }
                 if (next == 2)
