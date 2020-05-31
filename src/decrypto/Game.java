@@ -184,8 +184,24 @@ public class Game
         return ret;
     }
 
+    // avoids null pointer exception in some cases
+    public void fillEmptyClues()
+    {
+        if (whiteClues == null)
+        {
+            whiteClues = new ArrayList<>();
+            whiteClues.addAll(Arrays.asList("", "",""));
+        }
+        if (blackClues == null)
+        {
+            blackClues = new ArrayList<>();
+            blackClues.addAll(Arrays.asList("", "", ""));
+        }
+    }
+
     public void goToWhiteGuess()
     {
+        fillEmptyClues();
         step = Step.WHITEGUESS;
         whiteSheet.addRoundClues(whiteClues); // only show white clues on sheet
     }
