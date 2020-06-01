@@ -226,10 +226,16 @@ $scope.toasts = [];
     function handleYourPlayerId(packet) {
         $scope.playerId = packet.id;
         refreshPlayerColor();
+        refreshName();
     }
 
     function findPlayerFromId(id) {
         return $scope.game.players.find(p => p.id === id);
+    }
+
+    function refreshName() {
+        if ($scope.playerId !== null)
+        $scope.name = getClientPlayer().name;
     }
 
     function refreshPlayerColor() {
@@ -347,6 +353,7 @@ $scope.toasts = [];
 
         refreshClues();
         refreshCodePicture();
+        refreshName();
         refreshPlayerColor();
         refreshScore();
         refreshClueLists();
@@ -498,6 +505,7 @@ $scope.toasts = [];
                     break;
                 case 'rename':
                     findPlayerFromId(packet.player.id).name = packet.newName;
+                    refreshName();
                     break;
                 case 'changeColor':
                     handleChangeColor(packet);
