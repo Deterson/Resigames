@@ -46,13 +46,11 @@
     </div>
 
     <span class="navbar-text px-2">{{state}}</span>
-    <span class="navbar-text px-2">Joueur {{playerId}}</span>
+    <span class="navbar-text px-2">{{name}}</span>
     <span class="navbar-text px-2">Equipe {{playerColor}}</span>
     <span class="navbar-text" style="text-align: center">{{stateText}}</span>
 
     <ul class="navbar-nav ml-auto">
-        <li><a class="px-2" ng-click="testToasts()">Test Toasts</a></li>
-        <li><a id="btnModal" class="px-2" data-toggle="modal" data-target="#modal">Test Modal</a></li>
         <li><a class="px-2" ng-click="openNav()">Joueurs ({{game.players.length}})</a></li>
     </ul>
 </nav>
