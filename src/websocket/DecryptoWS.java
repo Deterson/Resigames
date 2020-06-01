@@ -35,13 +35,11 @@ public class DecryptoWS
         if (game == null)
             game = new Game(httpSession.getServletContext().getRealPath("\\WEB-INF\\words.txt"));
 
-/* TODO remettre (et trouver comment avoir un debug switch genre if (debug))
 
         // find player of same requestSession (i e multiple tabs opened idk)
         for(Player p : game.getPlayers())
             if (p.getRequestSession().equals(requestSession))
                 player = p;
-*/
 
         // link new player to game if not found
         if (player == null)
@@ -159,10 +157,6 @@ public class DecryptoWS
                     else if (game.getStep() == Step.ENDROUND) // reveal black code
                         DecryptoBroadcast.broadcastColoredCode(game, Color.BLACK);
                     DecryptoBroadcast.broadcastUpdate(game);
-                }
-                else
-                {
-                    // TODO déclencher timer et le broadcaster
                 }
                 break;
 

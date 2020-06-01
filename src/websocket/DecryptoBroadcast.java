@@ -133,10 +133,7 @@ public class DecryptoBroadcast
                         s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(toSend));
                     }
             }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     // WARNING : exits WS threads when closing. Careful when using this in removed player WS
