@@ -33,7 +33,7 @@ public class DecryptoWS
         String requestSession = session.getRequestParameterMap().get("requestSessionId").get(0);
 
         if (game == null)
-            game = new Game(httpSession.getServletContext().getRealPath("\\WEB-INF\\words.txt"));
+            game = new Game(httpSession.getServletContext().getRealPath("/WEB-INF/words.txt"));
 
 
         // find player of same requestSession (i e multiple tabs opened idk)
