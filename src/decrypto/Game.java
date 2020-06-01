@@ -20,6 +20,7 @@ public class Game
 {
     private Random r;
     private String dicoPath;
+    private Player modo;
 
 
     private List<Player> players;
@@ -48,6 +49,7 @@ public class Game
 
     public Game(String path)
     {
+        modo = null;
         dicoPath = path;
         System.out.println("path : " + path);
         r = new Random();
@@ -375,9 +377,31 @@ public class Game
         this.players = players;
     }
 
+    public Player getModo()
+    {
+        return modo;
+    }
+
+    public void changeModo()
+    {
+        if (players.size() == 1)
+            modo = players.get(0);
+        else if (getAllWsSessions().isEmpty())
+            modo = null;
+        else
+        {
+            Player oldModo = modo;
+            for (Player p : players)
+                if (p != oldModo && !p.getWsSessions().isEmpty())
+                    modo = p;
+        }
+    }
+
     public void addPlayer(Player player)
     {
         players.add(player);
+        if (players.size() == 1 || modo == null)
+            modo = player;
     }
 
     public Step getStep()
@@ -595,5 +619,16 @@ public class Game
     public void setBlackName(String blackName)
     {
         this.blackName = blackName;
+    }
+
+    public Player removePlayer(ActionRemove actionRemove)
+    {
+        if (actionRemove.getPlayer() != modo)
+            return null;
+
+        Player toRemove = findPlayerById(actionRemove.getId());
+        if (players.remove(toRemove))
+            return toRemove;
+        return null;
     }
 }

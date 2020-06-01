@@ -7,7 +7,6 @@ import decrypto.action.*;
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import javax.websocket.server.ServerEndpointConfig;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
@@ -73,7 +72,7 @@ public class DecryptoWS
     public void onTextMessage(String message)
     {
         System.out.println("received:\n" + message);
-        Action action = (Action)getClassFromJson(message, Action.class); // TODO enlever (Action) à chaque fois c relou
+        Action action = (Action)getClassFromJson(message, Action.class);
         System.out.println(action.getType());
 
         switch (action.getType())
@@ -93,12 +92,24 @@ public class DecryptoWS
                 DecryptoBroadcast.broadcastRename(game, actionRename);
                 break;
 
+            case "remove":
+                ActionRemove actionRemove = (ActionRemove)getClassFromJson(message, ActionRemove.class);
+
+                //do action and tell clients if possible
+                Player toRemove = game.removePlayer(actionRemove);
+                if (toRemove != null)
+                {
+                    DecryptoBroadcast.broadcastUpdate(game);
+                    DecryptoBroadcast.broadcastRemove(toRemove); // exits DecryptoWS
+                }
+                break;
             case "renameTeam":
                 ActionRenameTeam actionRenameTeam = (ActionRenameTeam)getClassFromJson(message, ActionRenameTeam.class);
                 //do action
                 game.renameTeam(actionRenameTeam);
                 //tell clients
                 DecryptoBroadcast.broadcastUpdate(game);
+                break;
             case "start":
                 //do action
                 boolean started = game.start();
@@ -162,6 +173,7 @@ public class DecryptoWS
                 //tell clients
                 if (allReady)
                     DecryptoBroadcast.broadcastUpdate(game);
+                break;
         }
     }
 
@@ -179,6 +191,13 @@ public class DecryptoWS
         //remove this ws from player
         player.getWsSessions().remove(wsSession);
         System.out.println("removed " + wsSession + " from player " + player.getRequestSession());
+
+        // removes from modo when no more WS
+        if (game.getModo() == player && player.getWsSessions().isEmpty())
+        {
+            game.changeModo();
+            DecryptoBroadcast.broadcastUpdate(game);
+        }
         // TODO enlever la game si plus de ws?
         if (game.getAllWsSessions().isEmpty())
         {

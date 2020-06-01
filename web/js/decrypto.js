@@ -492,6 +492,10 @@ $scope.toasts = [];
                 case 'yourPlayerId':
                     handleYourPlayerId(packet);
                     break;
+                case 'disconnect':
+                    alert("You've been disconnected");
+                    $scope.game = null;
+                    break;
                 case 'rename':
                     findPlayerFromId(packet.player.id).name = packet.newName;
                     break;
@@ -534,6 +538,15 @@ $scope.toasts = [];
         let packet = {};
         packet.type = 'renameTeam';
         packet.newName = $scope.renameTeamField;
+        socket.send(JSON.stringify(packet));
+    };
+
+
+    $scope.removePlayer = function(id)
+    {
+        let packet = {};
+        packet.type = 'remove';
+        packet.id = id;
         socket.send(JSON.stringify(packet));
     };
 

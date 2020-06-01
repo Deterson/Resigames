@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DecryptoBroadcast
 {
@@ -136,5 +137,25 @@ public class DecryptoBroadcast
         {
             e.printStackTrace();
         }
+    }
+
+    // WARNING : exits WS threads when closing. Careful when using this in removed player WS
+    public static void broadcastRemove(Player toRemove)
+    {
+        try {
+            synchronized (toRemove)
+            {
+                ActionDisconnect toSend = new ActionDisconnect();
+
+                // use CopyOnWriteArray to avoid modifying the session list when s.close() is called
+                CopyOnWriteArrayList<Session> copiedSessions = new CopyOnWriteArrayList<>(toRemove.getWsSessions());
+
+                for (Session s : copiedSessions)
+                {
+                    s.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(toSend));
+                    s.close();
+                }
+            }
+        }catch (IOException e) { e.printStackTrace(); }
     }
 }

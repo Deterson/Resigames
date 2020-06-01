@@ -324,6 +324,7 @@
                 <td>{{p.name}}</td>
                 <td>{{p.id}}</td>
                 <td>{{p.color}}</td>
+                <td ng-show="playerId === game.modo.id && p.id !== playerId"><a href="javascript:void(0)" ng-click="removePlayer(p.id)">&times;</a></td>
             </tr>
         </table>
 
