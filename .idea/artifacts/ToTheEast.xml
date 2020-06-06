@@ -2,10 +2,10 @@
   <artifact type="exploded-war" name="ToTheEast">
     <output-path>$PROJECT_DIR$/out/artifacts/ToTheEast</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="ToTheEast/web/Web" />
+      <element id="javaee-facet-resources" facet="Resigames/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="ToTheEast" />
+          <element id="module-output" name="Resigames" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="javax.servlet:jstl:1.2" />

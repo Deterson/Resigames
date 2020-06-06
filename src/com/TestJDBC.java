@@ -21,8 +21,8 @@ public class TestJDBC
         }
 
         /* Connexion à la base de données */
-        String url = "jdbc:mysql://localhost:3306/to_the_east_dev?serverTimezone=Europe%2FParis";
-        String utilisateur = "totheeast";
+        String url = "jdbc:mysql://localhost:3306/resigames_dev?serverTimezone=Europe%2FParis";
+        String utilisateur = "resigames";
         String motDePasse = System.getenv("DB_PASS");
         if (motDePasse == null)
             System.err.println("DB_PASS NON SPÉCIFIÉ DANS L'ENVIRONNEMENT JAVA");
