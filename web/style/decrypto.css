@@ -119,3 +119,137 @@ div[disabled]
     border-top-color: white !important;
     border-bottom-color: white !important;
 }
+
+/* Menu */
+
+.game-container {
+
+    background-color: #999999;
+    padding: 10px;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    min-height: 570px;
+}
+
+.game {
+
+    display: inline-block;
+    margin: 10px 0 0 2%;
+    flex-grow: 0;
+    width: 250px;
+    height: 250px;
+
+    border-radius: 10px;
+
+    background-color: dimgray;
+    position: relative;
+
+    transition: .5s ease;
+    backface-visibility: hidden;
+}
+
+.game .status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    color: white;
+    font-size: 30px;
+}
+
+
+.game .add {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+
+    color: white;
+    font-size: 35px;
+}
+
+.game .host {
+    position: absolute;
+    top: 5%;
+    left: 5%;
+
+    color: white;
+    font-size: 20px;
+}
+
+.game .player {
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+
+    color: white;
+    font-size: 20px;
+}
+
+.game .time {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+
+    color: white;
+    font-size: 20px;
+}
+
+.game .front {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.game:hover .back {
+    opacity: 0.3;
+}
+
+.game:hover .front {
+    opacity: 1;
+}
+
+.add {
+    width: 200px;
+    height: 200px;
+    transition: .5s ease;
+    opacity: 0.3;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.add:hover {
+  opacity: 1;
+}
+
+.horizontal-plus {
+    position: relative;
+    background-color: #FFFFFF;
+    width: 50%;
+    height: 12.5%;
+    left: 25%;
+    top: 43.75%;
+}
+.vertical-plus {
+    position: relative;
+    background-color: #FFFFFF;
+    width: 12.5%;
+    height: 50%;
+    left: 43.75%;
+    top: 12.5%;
+}
